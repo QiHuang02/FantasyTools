@@ -1,0 +1,8 @@
+{
+  "effect.fantasytools.stasis": "凝滞",
+  "item.fantasytools.zhongya.activated": "You have activated the Zhongya's Hourglass.",
+  "item.fantasytools.zhongya.bound": "The item has been bound to you.",
+  "item.fantasytools.zhongya.not_owner": "You are not the owner of the item and cannot use it.",
+  "item.fantasytools.zhongya_hourglass": "中娅沙漏",
+  "itemgroup.fantasytools.tab": "FantasyTools"
+}
