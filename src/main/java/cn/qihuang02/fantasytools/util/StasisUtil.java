@@ -12,7 +12,7 @@ public class StasisUtil {
     private static final Map<UUID, Long> LAST_CHECK_TIME = new HashMap<>();
     private static final long CHECK_INTERVAL = 5L;
 
-    public static boolean isInStasis(LivingEntity entity) {
+    public static boolean isStasis(LivingEntity entity) {
         if (entity == null) return false;
 
         UUID uuid = entity.getUUID();
