@@ -12,11 +12,15 @@ public class LangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        this.add("itemgroup.fantasytools.tab", "FantasyTools");
+        this.add("item.fantasytools.tab.title", "FantasyTools");
         this.add("effect.fantasytools.stasis", "Stasis");
-        this.add("item.fantasytools.zhongya.bound", "The item has been bound to you.");
-        this.add("item.fantasytools.zhongya.activated", "You have activated the Zhongya's Hourglass.");
         this.add("item.fantasytools.zhongya.not_owner", "You are not the owner of the item and cannot use it.");
+        this.add("item.fantasytools.zhongya.no_owner", "Owner: Null");
+        this.add("item.fantasytools.zhongya.owner", "Owner: %s");
+        this.add("item.fantasytools.inv_cloak.no_owner", "No owner");
+        this.add("item.fantasytools.inv_cloak.owner", "Owner: %s");
+        this.add(FTItems.DEMIGUISE_FUR.get(), "Demiguise fur");
         this.add(FTItems.ZHONGYAHOURGLASS.get(), "Zhongya's Hourglass");
+        this.add(FTItems.INV_CLOAK.get(), "Invisibility Cloak");
     }
 }
