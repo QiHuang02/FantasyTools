@@ -14,7 +14,7 @@ public class FTEffect {
             DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, FantasyTools.MODID);
 
     public static final Holder<MobEffect> STASIS_EFFECT =
-            MOB_EFFECTS.register("stasis", () -> new StasisEffect(MobEffectCategory.NEUTRAL, 16755200));
+            MOB_EFFECTS.register("stasis", () -> new StasisEffect(MobEffectCategory.BENEFICIAL, 16755200));
 
     public static void register(IEventBus bus) {
         MOB_EFFECTS.register(bus);
