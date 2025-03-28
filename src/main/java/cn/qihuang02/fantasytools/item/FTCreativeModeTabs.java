@@ -16,7 +16,7 @@ public class FTCreativeModeTabs {
             CREATIVE_MODE_TABS.register("fantasytools_tab",
                     () -> CreativeModeTab
                             .builder()
-                            .title(Component.translatable("itemgroup.fantasytools.tab"))
+                            .title(Component.translatable("item.fantasytools.tab"))
                             .icon(() -> FTItems.ZHONGYAHOURGLASS.get().getDefaultInstance())
                             .displayItems(((parameters, output) ->{
                                 output.accept(FTItems.ZHONGYAHOURGLASS.get());

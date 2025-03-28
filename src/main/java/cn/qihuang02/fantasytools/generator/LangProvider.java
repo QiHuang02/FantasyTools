@@ -12,7 +12,7 @@ public class LangProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        this.add("item.fantasytools.tab.title", "FantasyTools");
+        this.add("item.fantasytools.tab", "FantasyTools");
         this.add("effect.fantasytools.stasis", "Stasis");
         this.add("item.fantasytools.zhongya.not_owner", "You are not the owner of the item and cannot use it.");
         this.add("item.fantasytools.zhongya.no_owner", "Owner: Null");
