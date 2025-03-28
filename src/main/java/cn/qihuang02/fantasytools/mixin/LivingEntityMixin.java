@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin {
+public abstract class LivingEntityMixin {
+
     @Inject(
             method = "travel",
             at = @At("HEAD"),
@@ -20,7 +21,7 @@ public class LivingEntityMixin {
     )
     private void onTravel(Vec3 travelVector, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (StasisUtil.isInStasis(entity)) {
+        if (StasisUtil.isStasis(entity)) {
             ci.cancel();
         }
     }
@@ -32,7 +33,7 @@ public class LivingEntityMixin {
     )
     private void onHurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (StasisUtil.isInStasis(entity)) {
+        if (StasisUtil.isStasis(entity)) {
             cir.setReturnValue(true);
         }
     }
@@ -44,7 +45,7 @@ public class LivingEntityMixin {
     )
     private void onItemPickup(CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (StasisUtil.isInStasis(entity)) {
+        if (StasisUtil.isStasis(entity)) {
             ci.cancel();
         }
     }
@@ -54,9 +55,9 @@ public class LivingEntityMixin {
             at = @At("HEAD"),
             cancellable = true
     )
-    private void onAddEffect(MobEffectInstance effect, CallbackInfoReturnable<Boolean> cir) {
+    private void onAddEffect(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (StasisUtil.isInStasis(entity)) {
+        if (StasisUtil.isStasis(entity)) {
             cir.setReturnValue(true);
         }
     }
