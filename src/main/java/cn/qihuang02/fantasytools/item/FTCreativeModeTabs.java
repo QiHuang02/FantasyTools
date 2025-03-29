@@ -22,6 +22,7 @@ public class FTCreativeModeTabs {
                                 output.accept(FTItems.ZHONGYAHOURGLASS.get());
 
                                 output.accept(FTItems.INV_CLOAK.get());
+                                output.accept(FTItems.DEMIGUISE_FUR.get());
                             }))
                             .build()
             );
