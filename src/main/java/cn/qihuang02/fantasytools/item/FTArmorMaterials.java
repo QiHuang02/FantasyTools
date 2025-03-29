@@ -21,8 +21,8 @@ import java.util.function.Supplier;
 public class FTArmorMaterials {
     public static final Holder<ArmorMaterial> INVCLOAK_ARMOR_MATERIAL = register("invisible_fur",
             Util.make(new EnumMap<>(ArmorItem.Type.class), attribute -> {
-                attribute.put(ArmorItem.Type.CHESTPLATE, 2);
-            }), 30, 2f, 0, FTItems.DEMIGUISE_FUR);
+                attribute.put(ArmorItem.Type.CHESTPLATE, 4);
+            }), 30, 4f, 0, FTItems.DEMIGUISE_FUR);
 
     private static @NotNull Holder<ArmorMaterial> register(String name,
                                                            EnumMap<ArmorItem.Type, Integer> typeProtection,
