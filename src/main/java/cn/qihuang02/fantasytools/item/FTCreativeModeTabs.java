@@ -20,8 +20,7 @@ public class FTCreativeModeTabs {
                             .icon(() -> FTItems.ZHONGYAHOURGLASS.get().getDefaultInstance())
                             .displayItems(((parameters, output) ->{
                                 output.accept(FTItems.ZHONGYAHOURGLASS.get());
-
-                                output.accept(FTItems.INV_CLOAK.get());
+                                output.accept(FTItems.INVIS_CLOAK.get());
                                 output.accept(FTItems.DEMIGUISE_FUR.get());
                             }))
                             .build()

@@ -10,8 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-public class BlockTagProvider extends BlockTagsProvider {
-    public BlockTagProvider(
+public class FTBlockTagProvider extends BlockTagsProvider {
+    public FTBlockTagProvider(
             PackOutput output,
             CompletableFuture<HolderLookup.Provider> lookupProvider,
             @Nullable ExistingFileHelper existingFileHelper) {

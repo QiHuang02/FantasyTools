@@ -1,5 +1,6 @@
 package cn.qihuang02.fantasytools.item.custom;
 
+import cn.qihuang02.fantasytools.FTConfig;
 import cn.qihuang02.fantasytools.component.FTComponents;
 import cn.qihuang02.fantasytools.effect.FTEffect;
 import net.minecraft.network.chat.Component;
@@ -19,9 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class Zhongya extends Item{
-    private static final int STASIS_DURATION_TICKS = 100;
-    private static final int COOLDOWN_TICK = 600;
-
     public Zhongya(@NotNull Properties properties) {
         super(properties.stacksTo(1).rarity(Rarity.valueOf("FANTASYTOOLS_LEGENDARY")));
     }
@@ -31,19 +29,22 @@ public class Zhongya extends Item{
     public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
 
+        int stasisDuration = FTConfig.stasisDurationTicks;
+        int cooldown = FTConfig.cooldownTicks;
+
         Optional<String> optionalOwnerName = Optional.ofNullable(item.get(FTComponents.OWNER));
         String OwnerName = player.getName().getString();
 
         if (optionalOwnerName.isEmpty() || player instanceof ServerPlayer) {
             item.set(FTComponents.OWNER, OwnerName);
-            player.addEffect(new MobEffectInstance(FTEffect.STASIS_EFFECT, STASIS_DURATION_TICKS, 4, false, true));
-            player.getCooldowns().addCooldown(this, COOLDOWN_TICK);
+            player.addEffect(new MobEffectInstance(FTEffect.STASIS_EFFECT, stasisDuration, 4, false, true));
+            player.getCooldowns().addCooldown(this, cooldown);
             player.fallDistance = 0.0F;
             return InteractionResultHolder.sidedSuccess(item, world.isClientSide());
         }
 
         if (!optionalOwnerName.get().equals(OwnerName)) {
-            player.getCooldowns().addCooldown(this, COOLDOWN_TICK);
+            player.getCooldowns().addCooldown(this, cooldown);
             player.displayClientMessage(Component.translatable("item.fantasytools.zhongya.not_owner"), true);
             return InteractionResultHolder.fail(item);
         }
@@ -59,10 +60,10 @@ public class Zhongya extends Item{
     ) {
         Optional<String> optionalOwnerName = Optional.ofNullable(stack.get(FTComponents.OWNER));
 
-        optionalOwnerName.ifPresent(s -> tooltipComponents.addLast(Component.translatable("item.fantasytools.zhongya.owner", s)));
+        optionalOwnerName.ifPresent(s -> tooltipComponents.add(1, Component.translatable("item.fantasytools.zhongya.owner", s)));
 
         if (optionalOwnerName.isEmpty()) {
-            tooltipComponents.addLast(Component.translatable("item.fantasytools.zhongya.no_owner"));
+            tooltipComponents.add(1, Component.translatable("item.fantasytools.zhongya.no_owner"));
         }
     }
 }

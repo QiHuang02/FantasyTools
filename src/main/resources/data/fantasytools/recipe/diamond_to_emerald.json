@@ -1,0 +1,27 @@
+{
+  "type": "fantasytools:portal_transform",
+  "input": {
+    "item": "minecraft:diamond"
+  },
+  "result": {
+    "id": "minecraft:emerald"
+  },
+  "byproducts": [
+    {
+      "template": {
+        "id": "minecraft:lapis_lazuli"
+      },
+      "chance": 0.1,
+      "min_count": 1,
+      "max_count": 2
+    },
+    {
+      "template": {
+        "id": "minecraft:coal"
+      },
+      "chance": 0.05,
+      "min_count": 1,
+      "max_count": 1
+    }
+  ]
+}

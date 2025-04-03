@@ -22,7 +22,7 @@ public class DataGenerators {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
         generator.addProvider(event.includeServer(),
-                new LangProvider(packOutput)
+                new FTLangProvider(packOutput)
         );
         generator.addProvider(event.includeServer(),
                 new CuriosSlotProvider(
@@ -31,14 +31,16 @@ public class DataGenerators {
                         lookupProvider)
         );
         generator.addProvider(event.includeServer(),
-                new ItemTagProvider(
+                new FTItemTagProvider(
                         packOutput,
                         lookupProvider,
                         generator.addProvider(
                                 event.includeServer(),
-                                new BlockTagProvider(packOutput, lookupProvider, existingFileHelper)
+                                new FTBlockTagProvider(packOutput, lookupProvider, existingFileHelper)
                         ).contentsGetter(),
                         existingFileHelper
                 ));
+        generator.addProvider(event.includeServer(),
+                new FTDatapackProvider(packOutput, lookupProvider));
     }
 }

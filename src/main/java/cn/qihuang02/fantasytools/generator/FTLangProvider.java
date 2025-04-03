@@ -5,8 +5,8 @@ import cn.qihuang02.fantasytools.item.FTItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
-public class LangProvider extends LanguageProvider {
-    public LangProvider(PackOutput output) {
+public class FTLangProvider extends LanguageProvider {
+    public FTLangProvider(PackOutput output) {
         super(output, FantasyTools.MODID, "en_us");
     }
 
@@ -19,8 +19,9 @@ public class LangProvider extends LanguageProvider {
         this.add("item.fantasytools.zhongya.owner", "Owner: %s");
         this.add("item.fantasytools.inv_cloak.no_owner", "No owner");
         this.add("item.fantasytools.inv_cloak.owner", "Owner: %s");
+        this.add("enchantment.fantasytools.pierce", "Pierce");
         this.add(FTItems.DEMIGUISE_FUR.get(), "Demiguise fur");
         this.add(FTItems.ZHONGYAHOURGLASS.get(), "Zhongya's Hourglass");
-        this.add(FTItems.INV_CLOAK.get(), "Invisibility Cloak");
+        this.add(FTItems.INVIS_CLOAK.get(), "Invisibility Cloak");
     }
 }

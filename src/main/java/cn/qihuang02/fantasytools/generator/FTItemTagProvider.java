@@ -16,12 +16,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-public class ItemTagProvider extends ItemTagsProvider {
+public class FTItemTagProvider extends ItemTagsProvider {
 
     private static final TagKey<Item> CURIOS_HOURGLASS =
             ItemTags.create(ResourceLocation.fromNamespaceAndPath("curios", "hourglass"));
 
-    public ItemTagProvider(
+    public FTItemTagProvider(
             PackOutput output,
             CompletableFuture<HolderLookup.Provider> lookupProvider,
             CompletableFuture<TagLookup<Block>> blockTags,
