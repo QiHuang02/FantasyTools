@@ -29,8 +29,8 @@ public class Zhongya extends Item{
     public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack item = player.getItemInHand(hand);
 
-        int stasisDuration = FTConfig.stasisDurationTicks;
-        int cooldown = FTConfig.cooldownTicks;
+        int stasisDuration = FTConfig.STASIS_DURATION_TICKS.get();
+        int cooldown = FTConfig.COOLDOWN_TICKS.get();
 
         Optional<String> optionalOwnerName = Optional.ofNullable(item.get(FTComponents.OWNER));
         String OwnerName = player.getName().getString();
