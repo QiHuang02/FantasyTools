@@ -9,5 +9,6 @@
   "item.fantasytools.zhongya.no_owner": "所有者: Null",
   "item.fantasytools.zhongya.not_owner": "你不是这件物品的所有者，你无权使用！",
   "item.fantasytools.zhongya.owner": "所有者: %s",
-  "item.fantasytools.zhongya_hourglass": "中娅沙漏"
+  "item.fantasytools.zhongya_hourglass": "中娅沙漏",
+  "tag.item.curios.hourglass": "沙漏"
 }

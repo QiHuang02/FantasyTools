@@ -2,6 +2,7 @@ package cn.qihuang02.fantasytools.recipe.custom;
 
 import cn.qihuang02.fantasytools.recipe.FTRecipes;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
@@ -30,6 +31,8 @@ public record PortalTransformRecipe(
         ItemStack resultTemplate,
         List<PortalTransformRecipe.ByproductDefinition> byproducts
 ) implements Recipe<SimpleItemInput> {
+    private static final int MAX_BYPRODUCT_TYPES = 9;
+
     @Override
     public boolean matches(SimpleItemInput input, Level level) {
         return inputIngredient.test(input.getItem(0));
@@ -104,14 +107,55 @@ public record PortalTransformRecipe(
         );
     }
 
+    /**
+     * 验证配方数据的有效性 (用于 Codec)。
+     *
+     * @param recipe 待验证的配方实例
+     * @return 如果有效，返回包含配方的 DataResult.success；否则返回 DataResult.error。
+     */
+    private static DataResult<PortalTransformRecipe> validate(PortalTransformRecipe recipe) {
+        if (recipe.resultTemplate.isEmpty()) {
+            return DataResult.error(() -> "Recipe result template cannot be empty");
+        }
+
+        List<ByproductDefinition> byproducts = recipe.byproducts();
+        if (byproducts.size() > MAX_BYPRODUCT_TYPES) {
+            return DataResult.error(() -> "Recipe cannot have more than " + MAX_BYPRODUCT_TYPES + " byproduct types, found " + byproducts.size());
+        }
+
+        for (int i = 0; i < byproducts.size(); i++) {
+            if (byproducts.get(i).template.isEmpty()) {
+                int finalI = i;
+                return DataResult.error(() -> "Byproduct template at index " + finalI + " cannot be empty");
+            }
+
+            if (byproducts.get(i).minCount() <= 0 || byproducts.get(i).maxCount() < byproducts.get(i).minCount()) {
+                int finalI1 = i;
+                return DataResult.error(() -> "Byproduct at index " + finalI1 + " has invalid min/max counts");
+            }
+            if (byproducts.get(i).chance() <= 0 || byproducts.get(i).chance() > 1) {
+                int finalI2 = i;
+                return DataResult.error(() -> "Byproduct at index " + finalI2 + " has invalid chance (must be > 0 and <= 1)");
+            }
+        }
+        return DataResult.success(recipe);
+    }
+
     public static class Serializer implements RecipeSerializer<PortalTransformRecipe> {
-        public static final MapCodec<PortalTransformRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(PortalTransformRecipe::inputIngredient),
-                ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("required_current_dimension").forGetter(PortalTransformRecipe::requiredCurrentDimension),
-                ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("required_target_dimension").forGetter(PortalTransformRecipe::requiredTargetDimension),
-                ItemStack.STRICT_CODEC.fieldOf("result").forGetter(PortalTransformRecipe::resultTemplate),
-                ByproductDefinition.CODEC.codec().listOf().fieldOf("byproducts").orElse(Collections.emptyList()).forGetter(PortalTransformRecipe::byproducts)
-        ).apply(instance, PortalTransformRecipe::new));
+        private static final MapCodec<PortalTransformRecipe> BASE_CODEC = RecordCodecBuilder.mapCodec(
+                instance -> instance.group(
+                        Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(PortalTransformRecipe::inputIngredient),
+                        ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("required_current_dimension").forGetter(PortalTransformRecipe::requiredCurrentDimension),
+                        ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("required_target_dimension").forGetter(PortalTransformRecipe::requiredTargetDimension),
+                        ItemStack.STRICT_CODEC.fieldOf("result").forGetter(PortalTransformRecipe::resultTemplate),
+                        ByproductDefinition.CODEC.codec().listOf().fieldOf("byproducts").orElse(Collections.emptyList()).forGetter(PortalTransformRecipe::byproducts)
+                ).apply(instance, PortalTransformRecipe::new)
+        );
+
+        public static final MapCodec<PortalTransformRecipe> CODEC = BASE_CODEC
+                .flatXmap(PortalTransformRecipe::validate,
+                        PortalTransformRecipe::validate
+                );
 
         public static final StreamCodec<RegistryFriendlyByteBuf, PortalTransformRecipe> STREAM_CODEC = StreamCodec.composite(
                 Ingredient.CONTENTS_STREAM_CODEC, PortalTransformRecipe::inputIngredient,

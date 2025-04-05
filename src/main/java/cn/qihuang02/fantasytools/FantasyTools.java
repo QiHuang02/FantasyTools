@@ -1,6 +1,7 @@
 package cn.qihuang02.fantasytools;
 
 import cn.qihuang02.fantasytools.attachment.SpearAttachments;
+import cn.qihuang02.fantasytools.compat.CuriosCompat;
 import cn.qihuang02.fantasytools.component.FTComponents;
 import cn.qihuang02.fantasytools.effect.FTEffect;
 import cn.qihuang02.fantasytools.enchantment.FTEnchantmentEffects;
@@ -13,6 +14,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
@@ -28,6 +30,10 @@ public class FantasyTools {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public FantasyTools(IEventBus modEventBus, ModContainer modContainer) {
+        if (ModList.get().isLoaded("curios")) {
+            modEventBus.addListener(CuriosCompat::registerCapabilities);
+        }
+
         modEventBus.addListener(this::commonSetup);
 
         FTEffect.register(modEventBus);

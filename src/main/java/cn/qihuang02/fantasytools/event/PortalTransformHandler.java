@@ -110,7 +110,7 @@ public class PortalTransformHandler {
      * 尝试查找与给定物品实体、当前维度和目标维度匹配的 PortalTransformRecipe。
      *
      * @param itemEntity   正在传送的物品实体。
-     * @param currentLevel 物品实体当前所在的服务器级别。
+     * @param currentLevel 物品实体当前所在的维度。
      * @param targetDimKey 实体尝试传送到的目标维度。
      * @return 如果找到完全匹配的配方，则返回包含 RecipeHolder 的 Optional；否则返回 Optional.empty()。
      */
@@ -122,7 +122,7 @@ public class PortalTransformHandler {
         SimpleItemInput recipeInput = new SimpleItemInput(inputStack);
 
         Optional<RecipeHolder<PortalTransformRecipe>> potentialRecipe = recipeManager.getRecipeFor(
-                FTRecipes.PORTAL_TRANSFORM_TYPE.get(), // 使用修正后的名称
+                FTRecipes.PORTAL_TRANSFORM_TYPE.get(),
                 recipeInput,
                 currentLevel
         );

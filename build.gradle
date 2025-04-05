@@ -31,10 +31,28 @@ repositories {
         }
     }
 
-    repositories {
-        maven {
-            name = "TerraformersMC"
-            url = "https://maven.terraformersmc.com/"
+    maven {
+        url "https://api.modrinth.com/maven"
+    }
+
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
+
+    maven {
+        // saps.dev Maven (KubeJS and Rhino)
+        url = "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
+    maven {
+        // For com.github.rtyley:animated-gif-lib-for-java, a KubeJS dependency
+        url 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
         }
     }
 }
@@ -122,13 +140,16 @@ dependencies {
     // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
     // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
 
-    implementation "curse.maven:jade-324717:6291517"
+    implementation "maven.modrinth:jade:${jade_version}+neoforge"
 
     runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
     compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
 
     compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
+
+    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    // compileOnly "dev.latvian.mods:rhino-neoforge:${rhino_version}"
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar

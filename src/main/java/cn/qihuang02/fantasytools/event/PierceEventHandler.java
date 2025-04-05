@@ -55,13 +55,8 @@ public class PierceEventHandler {
             float bonusDamage = calculateBonusDamage(enchantmentLevel, targetEntity, currentSpearCount);
             float originalDamage = event.getOriginalDamage();
             event.setNewDamage(originalDamage + bonusDamage);
-            FantasyTools.LOGGER.debug("Pierce Shift-Triggered! Spears={}, OriginalDmg={}, BonusDmg={}, NewAmount={}", currentSpearCount, originalDamage, bonusDamage, event.getOriginalDamage());
-            if (spearMap.containsKey(attackerUUID)) {
-                spearMap.remove(attackerUUID);
-                FantasyTools.LOGGER.debug("Spears removed via Shift-Trigger for {} on {}", player.getName().getString(), targetEntity.getName().getString());
-            } else {
-                FantasyTools.LOGGER.debug("No existing spears to remove via Shift-Trigger for {} on {}", player.getName().getString(), targetEntity.getName().getString());
-            }
+
+            spearMap.remove(attackerUUID);
             targetEntity.setData(SpearAttachments.SPEARS, spearMap);
             return;
         }
@@ -117,7 +112,6 @@ public class PierceEventHandler {
 
         if (changed) {
             entity.setData(SpearAttachments.SPEARS, spearDataMap);
-            FantasyTools.LOGGER.debug("Updated spear data for entity {} after expiration check.", entity.getUUID());
         }
     }
 }

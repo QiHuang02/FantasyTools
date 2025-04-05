@@ -20,6 +20,10 @@ public class FTLangProvider extends LanguageProvider {
         this.add("item.fantasytools.inv_cloak.no_owner", "No owner");
         this.add("item.fantasytools.inv_cloak.owner", "Owner: %s");
         this.add("enchantment.fantasytools.pierce", "Pierce");
+
+        this.add("tag.item.curios.hourglass", "Hourglass");
+        this.add("emi.category.fantasytools.portal_transform", "Portal Transform");
+
         this.add(FTItems.DEMIGUISE_FUR.get(), "Demiguise fur");
         this.add(FTItems.ZHONGYAHOURGLASS.get(), "Zhongya's Hourglass");
         this.add(FTItems.INVIS_CLOAK.get(), "Invisibility Cloak");
