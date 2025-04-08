@@ -22,7 +22,17 @@ public class FTLangProvider extends LanguageProvider {
         this.add("enchantment.fantasytools.pierce", "Pierce");
 
         this.add("tag.item.curios.hourglass", "Hourglass");
+
         this.add("emi.category.fantasytools.portal_transform", "Portal Transform");
+        this.add("tooltip.fantasytools.portal_transform.byproduct", "Byproduct");
+        this.add("tooltip.fantasytools.portal_transform.byproduct.chance", "Chance: %s");
+        this.add("tooltip.fantasytools.portal_transform.byproduct.min_count", "Min Count: %s");
+        this.add("tooltip.fantasytools.portal_transform.byproduct.max_count", "Max Count: %s");
+
+        this.add("tooltip.fantasytools.portal_transform.dimension", "Dimension Requirement");
+        this.add("tooltip.fantasytools.portal_transform.unknown_dimension", "Unknown dimension");
+        this.add("tooltip.fantasytools.portal_transform.no_requirement", "No requirement");
+
 
         this.add(FTItems.DEMIGUISE_FUR.get(), "Demiguise fur");
         this.add(FTItems.ZHONGYAHOURGLASS.get(), "Zhongya's Hourglass");

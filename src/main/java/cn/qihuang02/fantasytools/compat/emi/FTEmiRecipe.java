@@ -1,21 +1,31 @@
 package cn.qihuang02.fantasytools.compat.emi;
 
+import cn.qihuang02.fantasytools.FantasyTools;
 import cn.qihuang02.fantasytools.recipe.custom.PortalTransformRecipe;
-import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
-import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class FTEmiRecipe implements EmiRecipe {
     private RecipeHolder<PortalTransformRecipe> recipeHolder;
@@ -24,6 +34,10 @@ public class FTEmiRecipe implements EmiRecipe {
     private EmiStack output;
 
     private List<EmiStack> byproductsForDisplay;
+
+    private static final int BYPRODUCT_GRID_X = 34;
+    private static final int BYPRODUCT_GRID_Y = 60;
+    private static final int GRID_CELL_SIZE = 18;
 
     public FTEmiRecipe(RecipeHolder<PortalTransformRecipe> holder) {
         this.recipeHolder = holder;
@@ -39,7 +53,7 @@ public class FTEmiRecipe implements EmiRecipe {
         }
 
         this.byproductsForDisplay = recipe.byproducts().stream()
-                .map(def -> EmiStack.of(def.template()))
+                .map(def -> EmiStack.of(def.byproduct()))
                 .filter(stack -> !stack.isEmpty())
                 .toList();
     }
@@ -61,47 +75,138 @@ public class FTEmiRecipe implements EmiRecipe {
 
     @Override
     public List<EmiStack> getOutputs() {
-        return List.of(output);
-        // List<EmiStack> allOutputs = new java.util.ArrayList<>();
-        // allOutputs.add(output);
-        // allOutputs.addAll(byproductsForDisplay);
-        // return allOutputs;
+        List<EmiStack> outputs = new ArrayList<>();
+        outputs.add(output);
+
+        outputs.addAll(byproductsForDisplay.stream()
+                .limit(9)
+                .toList());
+
+        return outputs;
     }
 
     @Override
     public int getDisplayWidth() {
-        return 82;
+        return 120;
     }
 
     @Override
     public int getDisplayHeight() {
-        return 36;
+        return  120;
     }
 
     @Override
     public void addWidgets(WidgetHolder widgets) {
-        int x = 0;
-        int y = (getDisplayHeight() - 18) / 2;
+        int centerX = (getDisplayWidth() / 2) - 8;
 
-        widgets.addSlot(input, x, y);
-        x += 18 + 4; // 输入槽宽度 + 间距
+        widgets.addSlot(input, centerX, 2).appendTooltip(() -> createDimensionTooltip(recipe.currentDimension()));
+        widgets.addTexture(
+                ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "textures/gui/transform.png"),
+                centerX + 2, 22,
+                13, 16,
+                0, 0,
+                13, 16,
+                13, 16
+        );
+        widgets.addSlot(output, centerX, 40).recipeContext(this).appendTooltip(() -> createDimensionTooltip(recipe.targetDimension()));
+        widgets.addTexture(
+                ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "textures/gui/big_slot.png"),
+                34, 60,
+                54, 54,
+                0, 0,
+                54, 54,
+                54, 54
+        );
 
-        widgets.addTexture(EmiTexture.EMPTY_ARROW, x, y + 1);
-        x += EmiTexture.EMPTY_ARROW.width + 4;
+        addByproductsSlots(widgets);
+    }
 
-        widgets.addSlot(output, x, y).recipeContext(this);
+    private ClientTooltipComponent createDimensionTooltip(Optional<ResourceKey<Level>> dimensionKey) {
+        MutableComponent dimensionText = Component.translatable("tooltip.fantasytools.portal_transform.dimension")
+                .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                .append(
+                        dimensionKey.map(key -> {
+                                    ResourceLocation loc = key.location();
+                                    String dimensionKeyStr = "dimension." + loc.getNamespace() + "." + loc.getPath();
+                                    return I18n.exists(dimensionKeyStr)
+                                            ? Component.translatable(dimensionKeyStr)
+                                            : Component.translatable("tooltip.fantasytools.portal_transform.unknown_dimension");
+                                })
+                                .orElse(Component.translatable("tooltip.fantasytools.portal_transform.no_requirement"))
+                                .withStyle(ChatFormatting.GOLD));
+        return ClientTooltipComponent.create(dimensionText.getVisualOrderText());
+    }
 
-        int byproductX = x;
-        int byproductY = y + 20;
+
+
+    private void addByproductsSlots(WidgetHolder widgets) {
+        int index = 0;
         for (EmiStack byproduct : byproductsForDisplay) {
-            widgets.addSlot(byproduct, byproductX, byproductY);
-            // 添加 Tooltip 显示几率和数量
-            widgets.addTooltipText(List.of(Component.translatable("emi.fantasytools.byproduct_info," /*,  添加几率、数量信息 */)), byproductX, byproductY, 18, 18);
-            byproductY += 10; // 稍微向下移动下一个副产品槽位
-            if (byproductY > getDisplayHeight() - 18) { // 避免超出边界
-                byproductX += 20;
-                byproductY = y + 20;
-            }
+            int[] pos = getGridPosition(index);
+
+            int finalIndex = index;
+            widgets.addSlot(byproduct, pos[0], pos[1])
+                    .drawBack(false)
+                    .appendTooltip(() ->
+                            createMultiLineTooltip(getChanceTooltip(finalIndex)
+                            ));
+            index++;
         }
+    }
+
+    private ClientTooltipComponent createMultiLineTooltip(List<Component> components) {
+        List<ClientTooltipComponent> lines = components.stream()
+                .map(Component::getVisualOrderText)
+                .map(ClientTooltipComponent::create)
+                .toList();
+
+        return new ClientTooltipComponent() {
+            private static final int LINE_SPACING = 2;
+
+            @Override
+            public int getHeight() {
+                return lines.stream().mapToInt(ClientTooltipComponent::getHeight).sum() + (lines.size() - 1) * LINE_SPACING;
+            }
+
+            @Override
+            public int getWidth(Font font) {
+                return lines.stream().mapToInt(c -> c.getWidth(font)).max().orElse(0);
+            }
+
+            @Override
+            public void renderText(Font font, int x, int y, Matrix4f matrix, MultiBufferSource.BufferSource bufferSource) {
+                int currentY = y;
+                for (ClientTooltipComponent line : lines) {
+                    line.renderText(font, x, currentY, matrix, bufferSource);
+                    currentY += line.getHeight() + LINE_SPACING;
+                }
+            }
+        };
+    }
+
+    private int[] getGridPosition(int index) {
+        int row = index / 3;
+        int col = index % 3;
+
+        return new int[] {
+                BYPRODUCT_GRID_X + col * (GRID_CELL_SIZE),
+                BYPRODUCT_GRID_Y + row * (GRID_CELL_SIZE),
+        };
+    }
+
+    private List<Component> getChanceTooltip(int index) {
+        if (index < recipe.byproducts().size()) {
+            float chance = recipe.byproducts().get(index).chance();
+            int minCount = recipe.byproducts().get(index).minCount();
+            int maxCount = recipe.byproducts().get(index).maxCount();
+            return List.of(
+                    Component.translatable("tooltip.fantasytools.portal_transform.byproduct").withStyle(ChatFormatting.GRAY),
+                    Component.translatable("tooltip.fantasytools.portal_transform.byproduct.chance", chance * 100).withStyle(ChatFormatting.GRAY),
+                    Component.translatable("tooltip.fantasytools.portal_transform.byproduct.min_count", minCount).withStyle(ChatFormatting.DARK_GRAY),
+                    Component.translatable("tooltip.fantasytools.portal_transform.byproduct.max_count", maxCount).withStyle(ChatFormatting.DARK_GRAY)
+            );
+        }
+
+        return List.of();
     }
 }

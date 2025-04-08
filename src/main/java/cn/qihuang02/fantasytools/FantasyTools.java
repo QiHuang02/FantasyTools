@@ -30,11 +30,11 @@ public class FantasyTools {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public FantasyTools(IEventBus modEventBus, ModContainer modContainer) {
+        modEventBus.addListener(this::commonSetup);
+
         if (ModList.get().isLoaded("curios")) {
             modEventBus.addListener(CuriosCompat::registerCapabilities);
         }
-
-        modEventBus.addListener(this::commonSetup);
 
         FTEffect.register(modEventBus);
         FTItems.register(modEventBus);

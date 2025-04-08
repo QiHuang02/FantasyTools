@@ -31,22 +31,67 @@ public class PortalTransformHandler {
         Entity entity = event.getEntity();
         Level level = entity.level();
 
-        if (!(entity instanceof ItemEntity itemEntity) || level.isClientSide() || itemEntity.getItem().isEmpty()) {
+        if (
+                !(entity instanceof ItemEntity itemEntity) ||
+                        level.isClientSide() ||
+                        itemEntity.getItem().isEmpty()
+        ) {
             return;
         }
 
         ServerLevel serverLevel = (ServerLevel) level;
+        ResourceKey<Level> currentDimKey = serverLevel.dimension();
         ResourceKey<Level> targetDimKey = event.getDimension();
 
-        Optional<RecipeHolder<PortalTransformRecipe>> recipeHolderOpt = findMatchRecipe(itemEntity, serverLevel, targetDimKey);
+        Optional<RecipeHolder<PortalTransformRecipe>> potentialRecipe = findRecipeByInput(itemEntity, serverLevel);
 
-        if (recipeHolderOpt.isPresent()) {
-            RecipeHolder<PortalTransformRecipe> holder = recipeHolderOpt.get();
-            PortalTransformRecipe recipe = holder.value();
+        potentialRecipe
+                .filter(holder -> matchesDimensionRequirements(holder.value(), currentDimKey, targetDimKey))
+                .ifPresent(holder -> {
+                    event.setCanceled(true);
+                    transforming(itemEntity, serverLevel, holder.value());
+                });
+    }
 
-            event.setCanceled(true);
-            transforming(itemEntity, serverLevel, recipe);
-        }
+    /**
+     * 根据物品输入查找匹配的 PortalTransformRecipe。
+     *
+     * @param itemEntity   正在传送的物品实体。
+     * @param currentLevel 物品实体当前所在的维度。
+     * @return 如果找到基于物品输入的配方，则返回包含 RecipeHolder 的 Optional；否则返回 Optional.empty()。
+     */
+    private static Optional<RecipeHolder<PortalTransformRecipe>> findRecipeByInput(
+            ItemEntity itemEntity,
+            ServerLevel currentLevel
+    ) {
+        ItemStack inputStack = itemEntity.getItem();
+        RecipeManager recipeManager = currentLevel.getRecipeManager();
+        SimpleItemInput recipeInput = new SimpleItemInput(inputStack);
+
+        return recipeManager.getRecipeFor(
+                FTRecipes.PORTAL_TRANSFORM_TYPE.get(),
+                recipeInput,
+                currentLevel
+        );
+    }
+
+    private static boolean matchesDimensionRequirements(
+            PortalTransformRecipe recipe,
+            ResourceKey<Level> currentDimKey,
+            ResourceKey<Level> targetDimKey
+    ) {
+        boolean currentDimMatch =
+                recipe
+                        .getCurrentDimension()
+                        .map(required -> required.equals(currentDimKey))
+                        .orElse(true);
+        boolean targetDimMatch =
+                recipe
+                        .getTargetDimension()
+                        .map(required -> required.equals(targetDimKey))
+                        .orElse(true);
+
+        return currentDimMatch && targetDimMatch;
     }
 
     /**
@@ -71,7 +116,11 @@ public class PortalTransformHandler {
             for (PortalTransformRecipe.ByproductDefinition definition : recipe.getByproducts()) {
                 int byproductSpawnedTotalThisType = 0;
 
-                if (definition.minCount() <= 0 || definition.maxCount() < definition.minCount() || definition.template().isEmpty()) {
+                if (
+                        definition.minCount() <= 0 ||
+                                definition.maxCount() < definition.minCount() ||
+                                definition.byproduct().isEmpty()
+                ) {
                     continue;
                 }
 
@@ -85,7 +134,7 @@ public class PortalTransformHandler {
                         }
 
                         if (countToSpawn > 0) {
-                            ItemStack byproductStack = definition.template().copy();
+                            ItemStack byproductStack = definition.byproduct().copy();
                             byproductStack.setCount(countToSpawn);
 
                             ItemEntity byproductEntity = new ItemEntity(
@@ -93,51 +142,17 @@ public class PortalTransformHandler {
                                     pos.x(), pos.y(), pos.z(),
                                     byproductStack
                             );
-                            byproductEntity.setDeltaMovement(motion.add(motion));
+                            byproductEntity.setDeltaMovement(motion.add(
+                                    (level.random.nextFloat() - 0.5) * 0.1,
+                                    0.1,
+                                    (level.random.nextFloat() - 0.5) * 0.1
+                            ));
                             level.addFreshEntity(byproductEntity);
                             byproductSpawnedTotalThisType += countToSpawn;
                         }
                     }
                 }
-                if (byproductSpawnedTotalThisType > 0) {
-
-                }
             }
         }
-    }
-
-    /**
-     * 尝试查找与给定物品实体、当前维度和目标维度匹配的 PortalTransformRecipe。
-     *
-     * @param itemEntity   正在传送的物品实体。
-     * @param currentLevel 物品实体当前所在的维度。
-     * @param targetDimKey 实体尝试传送到的目标维度。
-     * @return 如果找到完全匹配的配方，则返回包含 RecipeHolder 的 Optional；否则返回 Optional.empty()。
-     */
-    private static Optional<RecipeHolder<PortalTransformRecipe>> findMatchRecipe(ItemEntity itemEntity, ServerLevel currentLevel, ResourceKey<Level> targetDimKey) {
-        ItemStack inputStack = itemEntity.getItem();
-        RecipeManager recipeManager = currentLevel.getRecipeManager();
-        ResourceKey<Level> currentDimKey = currentLevel.dimension();
-
-        SimpleItemInput recipeInput = new SimpleItemInput(inputStack);
-
-        Optional<RecipeHolder<PortalTransformRecipe>> potentialRecipe = recipeManager.getRecipeFor(
-                FTRecipes.PORTAL_TRANSFORM_TYPE.get(),
-                recipeInput,
-                currentLevel
-        );
-
-        return potentialRecipe.filter(holder -> {
-            PortalTransformRecipe recipe = holder.value();
-
-            boolean currentDimMatch = recipe.getRequiredCurrentDimension()
-                    .map(required -> required.equals(currentDimKey))
-                    .orElse(true);
-
-            boolean targetDimMatch = recipe.getRequiredTargetDimension()
-                    .map(required -> required.equals(targetDimKey))
-                    .orElse(true);
-            return currentDimMatch && targetDimMatch;
-        });
     }
 }
