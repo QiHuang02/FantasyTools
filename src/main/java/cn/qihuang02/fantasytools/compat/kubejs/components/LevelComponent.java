@@ -14,27 +14,24 @@ import net.minecraft.world.level.Level;
 public class LevelComponent implements RecipeComponent<ResourceKey<Level>> {
     public static final LevelComponent DIMENSION = new LevelComponent();
 
-    public final String dimension;
-    public final Codec<ResourceKey<Level>> codec;
+    private static final Codec<ResourceKey<Level>> CODEC = ResourceKey.codec(Registries.DIMENSION);
+    private static final String COMPONENT_NAME = "fantasytools:dimension";
 
-    public LevelComponent() {
-        this.dimension = "dimension";
-        this.codec = ResourceKey.codec(Registries.DIMENSION);
-    }
+    public LevelComponent() {}
 
     @Override
     public Codec<ResourceKey<Level>> codec() {
-        return this.codec;
+        return CODEC;
     }
 
     @Override
     public TypeInfo typeInfo() {
-        return TypeInfo.of(ResourceKey.class);
+        return TypeInfo.of(ResourceKey.class).withParams(TypeInfo.of(Level.class));
     }
 
     @Override
     public String toString() {
-        return this.dimension;
+        return COMPONENT_NAME;
     }
 
     @Override
@@ -47,19 +44,16 @@ public class LevelComponent implements RecipeComponent<ResourceKey<Level>> {
             }
         }
 
-        if (from instanceof ResourceLocation rl) {
-            return ResourceKey.create(Registries.DIMENSION, rl);
-        }
+        try {
+            ResourceLocation rl = from instanceof ResourceLocation loc ? loc :
+                    from instanceof String s ? ResourceLocation.tryParse(s) : null;
 
-        if (from instanceof String s) {
-            ResourceLocation rl = ResourceLocation.tryParse(s);
             if (rl != null) {
                 return ResourceKey.create(Registries.DIMENSION, rl);
-            } else {
-                throw ScriptRuntime.typeError(cx, "Invalid ResourceLocation string for dimension: '" + s + "'");
             }
-        }
+        } catch (Exception ignored) {
 
-        throw ScriptRuntime.typeError(cx, "Unable to convert " + from + " (type: " + (from == null ? "null" : from.getClass().getName()) + ") to a Dimension ResourceKey (ResourceKey<Level>)");
+        }
+        throw ScriptRuntime.typeError(cx, "Expected a ResourceKey, but got " + from);
     }
 }

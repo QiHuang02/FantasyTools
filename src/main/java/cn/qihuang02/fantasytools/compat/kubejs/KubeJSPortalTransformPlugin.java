@@ -1,5 +1,6 @@
 package cn.qihuang02.fantasytools.compat.kubejs;
 
+import cn.qihuang02.fantasytools.compat.kubejs.components.ByproductComponent;
 import cn.qihuang02.fantasytools.compat.kubejs.components.LevelComponent;
 import cn.qihuang02.fantasytools.recipe.FTRecipes;
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
@@ -16,5 +17,6 @@ public class KubeJSPortalTransformPlugin implements KubeJSPlugin {
     @Override
     public void registerRecipeComponents(RecipeComponentFactoryRegistry registry) {
         registry.register(LevelComponent.DIMENSION);
+        registry.register(ByproductComponent.BYPRODUCT);
     }
 }
