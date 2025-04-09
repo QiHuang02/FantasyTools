@@ -6,23 +6,19 @@ import dev.latvian.mods.kubejs.recipe.component.RecipeComponent;
 import dev.latvian.mods.rhino.type.TypeInfo;
 
 import java.util.List;
-import java.util.Optional;
 
-public class ByproductComponent implements RecipeComponent<Optional<List<Byproducts>>> {
-    public static final ByproductComponent BYPRODUCT = new ByproductComponent();
-
-    private ByproductComponent() {
-        super();
-    }
+public class ByproductsComponent implements RecipeComponent<Byproducts> {
+    public static final ByproductsComponent BYPRODUCT = new ByproductsComponent();
+    public static final RecipeComponent<List<Byproducts>> LIST = BYPRODUCT.asList();
 
     @Override
-    public Codec<Optional<List<Byproducts>>> codec() {
-        return null;
+    public Codec<Byproducts> codec() {
+        return Byproducts.CODEC.codec();
     }
 
     @Override
     public TypeInfo typeInfo() {
-        return TypeInfo.of(Optional.class);
+        return TypeInfo.of(Byproducts.class);
     }
 
     @Override

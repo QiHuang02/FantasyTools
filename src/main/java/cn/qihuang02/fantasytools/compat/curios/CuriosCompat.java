@@ -1,4 +1,4 @@
-package cn.qihuang02.fantasytools.compat;
+package cn.qihuang02.fantasytools.compat.curios;
 
 import cn.qihuang02.fantasytools.item.FTItems;
 import net.minecraft.world.item.ItemStack;

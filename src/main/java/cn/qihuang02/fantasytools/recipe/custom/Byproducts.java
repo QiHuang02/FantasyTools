@@ -11,21 +11,19 @@ import net.minecraft.world.item.ItemStack;
 public record Byproducts(
         ItemStack byproduct,
         float chance,
-        int minCount,
-        int maxCount
+        CountRange counts
 ) {
+
     public static final MapCodec<Byproducts> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ItemStack.STRICT_CODEC.fieldOf("byproduct").forGetter(Byproducts::byproduct),
             Codec.FLOAT.fieldOf("chance").forGetter(Byproducts::chance),
-            Codec.INT.fieldOf("min_count").forGetter(Byproducts::minCount),
-            Codec.INT.fieldOf("max_count").forGetter(Byproducts::maxCount)
+            CountRange.CODEC.fieldOf("counts").forGetter(Byproducts::counts)
     ).apply(instance, Byproducts::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, Byproducts> STREAM_CODEC = StreamCodec.composite(
             ItemStack.STREAM_CODEC, Byproducts::byproduct,
             ByteBufCodecs.FLOAT, Byproducts::chance,
-            ByteBufCodecs.INT, Byproducts::minCount,
-            ByteBufCodecs.INT, Byproducts::maxCount,
+            CountRange.STREAM_CODEC, Byproducts::counts,
             Byproducts::new
     );
 
@@ -38,10 +36,16 @@ public record Byproducts(
     }
 
     public int minCount() {
-        return minCount;
+        return counts.min();
     }
 
     public int maxCount() {
-        return maxCount;
+        return counts.max();
+    }
+
+    public boolean isValid() {
+        return !byproduct.isEmpty() &&
+                chance > 0 && chance <= 1 &&
+                counts.isValid();
     }
 }
