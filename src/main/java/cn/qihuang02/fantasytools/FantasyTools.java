@@ -1,7 +1,7 @@
 package cn.qihuang02.fantasytools;
 
 import cn.qihuang02.fantasytools.attachment.SpearAttachments;
-import cn.qihuang02.fantasytools.compat.CuriosCompat;
+import cn.qihuang02.fantasytools.compat.curios.CuriosCompat;
 import cn.qihuang02.fantasytools.component.FTComponents;
 import cn.qihuang02.fantasytools.effect.FTEffect;
 import cn.qihuang02.fantasytools.enchantment.FTEnchantmentEffects;
@@ -10,6 +10,7 @@ import cn.qihuang02.fantasytools.item.FTItems;
 import cn.qihuang02.fantasytools.recipe.FTRecipes;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -49,6 +50,10 @@ public class FantasyTools {
         modContainer.registerConfig(ModConfig.Type.COMMON, FTConfig.SPEC, String.format("%s-common.toml", MODID));
 
         NeoForge.EVENT_BUS.register(this);
+    }
+
+    public static ResourceLocation getRL(String path) {
+        return ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, path);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
