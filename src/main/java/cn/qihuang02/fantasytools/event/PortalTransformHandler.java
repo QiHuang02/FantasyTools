@@ -111,9 +111,8 @@ public class PortalTransformHandler {
 
         itemEntity.setItem(outputStack);
 
-        if (!recipe.getByproducts().isEmpty()) {
-
-            for (PortalTransformRecipe.ByproductDefinition definition : recipe.getByproducts()) {
+        recipe.getByproducts().ifPresent(byproducts -> {
+            for (PortalTransformRecipe.ByproductDefinition definition : byproducts) {
                 int byproductSpawnedTotalThisType = 0;
 
                 if (
@@ -153,6 +152,6 @@ public class PortalTransformHandler {
                     }
                 }
             }
-        }
+        });
     }
 }

@@ -29,7 +29,7 @@ public record PortalTransformRecipe(
         Optional<ResourceKey<Level>> currentDimension,
         Optional<ResourceKey<Level>> targetDimension,
         ItemStack result,
-        List<PortalTransformRecipe.ByproductDefinition> byproducts
+        Optional<List<PortalTransformRecipe.ByproductDefinition>> byproducts
 ) implements Recipe<SimpleItemInput> {
     private static final int MAX_BYPRODUCT_TYPES = 9;
 
@@ -49,7 +49,7 @@ public record PortalTransformRecipe(
             return DataResult.error(() -> "Recipe result byproduct cannot be empty");
         }
 
-        List<ByproductDefinition> byproducts = recipe.byproducts();
+        List<ByproductDefinition> byproducts = recipe.byproducts().orElse(Collections.emptyList());
         if (byproducts.size() > MAX_BYPRODUCT_TYPES) {
             return DataResult.error(() -> "Recipe cannot have more than " + MAX_BYPRODUCT_TYPES + " byproduct types, found " + byproducts.size());
         }
@@ -98,8 +98,8 @@ public record PortalTransformRecipe(
         return FTRecipes.PORTAL_TRANSFORM_TYPE.get();
     }
 
-    public List<ByproductDefinition> getByproducts() {
-        return byproducts;
+    public Optional<List<ByproductDefinition>> getByproducts() {
+        return byproducts.map(Collections::unmodifiableList);
     }
 
     @Override
@@ -131,10 +131,18 @@ public record PortalTransformRecipe(
         public static final StreamCodec<RegistryFriendlyByteBuf, ByproductDefinition> STREAM_CODEC = StreamCodec.composite(
                 ItemStack.STREAM_CODEC, ByproductDefinition::byproduct,
                 ByteBufCodecs.FLOAT, ByproductDefinition::chance,
-                ByteBufCodecs.VAR_INT, ByproductDefinition::minCount,
-                ByteBufCodecs.VAR_INT, ByproductDefinition::maxCount,
+                ByteBufCodecs.INT, ByproductDefinition::minCount,
+                ByteBufCodecs.INT, ByproductDefinition::maxCount,
                 ByproductDefinition::new
         );
+
+        public int minCount() {
+            return minCount;
+        }
+
+        public int maxCount() {
+            return maxCount;
+        }
     }
 
     public static class Serializer implements RecipeSerializer<PortalTransformRecipe> {
@@ -143,10 +151,9 @@ public record PortalTransformRecipe(
                 ByteBufCodecs.optional(ResourceKey.streamCodec(Registries.DIMENSION)), PortalTransformRecipe::currentDimension,
                 ByteBufCodecs.optional(ResourceKey.streamCodec(Registries.DIMENSION)), PortalTransformRecipe::targetDimension,
                 ItemStack.STREAM_CODEC, PortalTransformRecipe::result,
-                ByteBufCodecs.collection(ArrayList::new, PortalTransformRecipe.ByproductDefinition.STREAM_CODEC), PortalTransformRecipe::byproducts,
+                ByteBufCodecs.optional(ByteBufCodecs.collection(ArrayList::new, PortalTransformRecipe.ByproductDefinition.STREAM_CODEC)), PortalTransformRecipe::byproducts,
                 PortalTransformRecipe::new
         );
-
 
         private static final MapCodec<PortalTransformRecipe> BASE_CODEC = RecordCodecBuilder.mapCodec(
                 instance -> instance.group(
@@ -154,7 +161,7 @@ public record PortalTransformRecipe(
                         ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("current_dimension").forGetter(PortalTransformRecipe::currentDimension),
                         ResourceKey.codec(Registries.DIMENSION).optionalFieldOf("target_dimension").forGetter(PortalTransformRecipe::targetDimension),
                         ItemStack.STRICT_CODEC.fieldOf("result").forGetter(PortalTransformRecipe::result),
-                        ByproductDefinition.CODEC.codec().listOf().fieldOf("byproducts").orElse(Collections.emptyList()).forGetter(PortalTransformRecipe::byproducts)
+                        ByproductDefinition.CODEC.codec().listOf().optionalFieldOf("byproducts").forGetter(PortalTransformRecipe::byproducts)
                 ).apply(instance, PortalTransformRecipe::new)
         );
 

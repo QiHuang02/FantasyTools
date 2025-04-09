@@ -52,10 +52,12 @@ public class FTEmiRecipe implements EmiRecipe {
             this.output = EmiStack.of(recipe.getResultItem(registries));
         }
 
-        this.byproductsForDisplay = recipe.byproducts().stream()
-                .map(def -> EmiStack.of(def.byproduct()))
-                .filter(stack -> !stack.isEmpty())
-                .toList();
+        this.byproductsForDisplay = recipe.byproducts()
+                .map(byproducts -> byproducts.stream()
+                        .map(def -> EmiStack.of(def.byproduct()))
+                        .filter(stack -> !stack.isEmpty())
+                        .toList())
+                .orElse(List.of());
     }
 
     @Override
@@ -195,18 +197,19 @@ public class FTEmiRecipe implements EmiRecipe {
     }
 
     private List<Component> getChanceTooltip(int index) {
-        if (index < recipe.byproducts().size()) {
-            float chance = recipe.byproducts().get(index).chance();
-            int minCount = recipe.byproducts().get(index).minCount();
-            int maxCount = recipe.byproducts().get(index).maxCount();
-            return List.of(
-                    Component.translatable("tooltip.fantasytools.portal_transform.byproduct").withStyle(ChatFormatting.GRAY),
-                    Component.translatable("tooltip.fantasytools.portal_transform.byproduct.chance", chance * 100).withStyle(ChatFormatting.GRAY),
-                    Component.translatable("tooltip.fantasytools.portal_transform.byproduct.min_count", minCount).withStyle(ChatFormatting.DARK_GRAY),
-                    Component.translatable("tooltip.fantasytools.portal_transform.byproduct.max_count", maxCount).withStyle(ChatFormatting.DARK_GRAY)
-            );
-        }
-
-        return List.of();
+        return recipe.byproducts()
+                .filter(byproducts -> index < byproducts.size())
+                .map(byproducts -> {
+                    float chance = byproducts.get(index).chance();
+                    int minCount = byproducts.get(index).minCount();
+                    int maxCount = byproducts.get(index).maxCount();
+                    return List.<Component>of(
+                            Component.translatable("tooltip.fantasytools.portal_transform.byproduct").withStyle(ChatFormatting.GRAY),
+                            Component.translatable("tooltip.fantasytools.portal_transform.byproduct.chance", chance * 100).withStyle(ChatFormatting.GRAY),
+                            Component.translatable("tooltip.fantasytools.portal_transform.byproduct.min_count", minCount).withStyle(ChatFormatting.DARK_GRAY),
+                            Component.translatable("tooltip.fantasytools.portal_transform.byproduct.max_count", maxCount).withStyle(ChatFormatting.DARK_GRAY)
+                    );
+                })
+                .orElse(List.of());
     }
 }
