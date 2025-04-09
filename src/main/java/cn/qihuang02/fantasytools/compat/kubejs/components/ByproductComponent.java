@@ -6,8 +6,9 @@ import dev.latvian.mods.kubejs.recipe.component.RecipeComponent;
 import dev.latvian.mods.rhino.type.TypeInfo;
 
 import java.util.List;
+import java.util.Optional;
 
-public class ByproductComponent implements RecipeComponent<List<PortalTransformRecipe.ByproductDefinition>> {
+public class ByproductComponent implements RecipeComponent<Optional<List<PortalTransformRecipe.ByproductDefinition>>> {
     public static final ByproductComponent BYPRODUCT = new ByproductComponent();
 
     private ByproductComponent() {
@@ -15,13 +16,13 @@ public class ByproductComponent implements RecipeComponent<List<PortalTransformR
     }
 
     @Override
-    public Codec<List<PortalTransformRecipe.ByproductDefinition>> codec() {
+    public Codec<Optional<List<PortalTransformRecipe.ByproductDefinition>>> codec() {
         return null;
     }
 
     @Override
     public TypeInfo typeInfo() {
-        return TypeInfo.of(List.class);
+        return TypeInfo.of(Optional.class);
     }
 
     @Override
