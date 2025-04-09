@@ -2,6 +2,7 @@ package cn.qihuang02.fantasytools.event;
 
 import cn.qihuang02.fantasytools.FantasyTools;
 import cn.qihuang02.fantasytools.recipe.FTRecipes;
+import cn.qihuang02.fantasytools.recipe.custom.Byproducts;
 import cn.qihuang02.fantasytools.recipe.custom.PortalTransformRecipe;
 import cn.qihuang02.fantasytools.recipe.custom.SimpleItemInput;
 import net.minecraft.resources.ResourceKey;
@@ -112,7 +113,7 @@ public class PortalTransformHandler {
         itemEntity.setItem(outputStack);
 
         recipe.getByproducts().ifPresent(byproducts -> {
-            for (PortalTransformRecipe.ByproductDefinition definition : byproducts) {
+            for (Byproducts definition : byproducts) {
                 int byproductSpawnedTotalThisType = 0;
 
                 if (
