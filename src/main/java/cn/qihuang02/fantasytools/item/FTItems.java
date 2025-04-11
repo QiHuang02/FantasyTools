@@ -1,8 +1,8 @@
 package cn.qihuang02.fantasytools.item;
 
 import cn.qihuang02.fantasytools.FantasyTools;
+import cn.qihuang02.fantasytools.item.custom.Hourglass;
 import cn.qihuang02.fantasytools.item.custom.Invis_cloak;
-import cn.qihuang02.fantasytools.item.custom.Zhongya;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
@@ -14,9 +14,13 @@ public class FTItems {
             DeferredRegister.createItems(FantasyTools.MODID);
 
     public static final DeferredItem<Item> ZHONGYAHOURGLASS =
-            ITEMS.register("zhongya_hourglass", () -> new Zhongya(new Item.Properties()));
+            ITEMS.register("zhongya_hourglass", () -> new Hourglass(
+                    new Item.Properties())
+            );
     public static final DeferredItem<Item> INVIS_CLOAK =
-            ITEMS.register("invisibility_cloak", () -> new Invis_cloak(new Item.Properties()));
+            ITEMS.register("invisibility_cloak", () -> new Invis_cloak(
+                    new Item.Properties()
+            ));
     public static final DeferredItem<Item> DEMIGUISE_FUR =
             ITEMS.register("demiguise_fur", () -> new Item(
                     new Item.Properties()

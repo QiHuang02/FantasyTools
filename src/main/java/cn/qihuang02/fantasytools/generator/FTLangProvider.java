@@ -15,10 +15,12 @@ public class FTLangProvider extends LanguageProvider {
         this.add("item.fantasytools.tab", "FantasyTools");
         this.add("effect.fantasytools.stasis", "Stasis");
         this.add("item.fantasytools.zhongya.not_owner", "You are not the owner of the item and cannot use it.");
-        this.add("item.fantasytools.zhongya.no_owner", "Owner: Null");
         this.add("item.fantasytools.zhongya.owner", "Owner: %s");
+        this.add("item.fantasytools.zhongya.key", "Press [ %s ] to activate Zhongya's Hourglass");
+
         this.add("item.fantasytools.inv_cloak.no_owner", "No owner");
         this.add("item.fantasytools.inv_cloak.owner", "Owner: %s");
+
         this.add("enchantment.fantasytools.pierce", "Pierce");
 
         this.add("tag.item.curios.hourglass", "Hourglass");
@@ -33,6 +35,7 @@ public class FTLangProvider extends LanguageProvider {
         this.add("tooltip.fantasytools.portal_transform.unknown_dimension", "Unknown dimension");
         this.add("tooltip.fantasytools.portal_transform.no_requirement", "No requirement");
 
+        this.add("tooltip.jade.spear.count", "Spear Count: %s");
 
         this.add(FTItems.DEMIGUISE_FUR.get(), "Demiguise fur");
         this.add(FTItems.ZHONGYAHOURGLASS.get(), "Zhongya's Hourglass");
