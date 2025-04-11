@@ -8,6 +8,8 @@ import dev.latvian.mods.kubejs.recipe.RecipeKey;
 import dev.latvian.mods.kubejs.recipe.component.IngredientComponent;
 import dev.latvian.mods.kubejs.recipe.component.ItemStackComponent;
 import dev.latvian.mods.kubejs.recipe.schema.RecipeSchema;
+import dev.latvian.mods.kubejs.typings.Info;
+import dev.latvian.mods.kubejs.typings.Param;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -24,6 +26,13 @@ public interface PortalTransformRecipeSchema {
 
     RecipeKey<List<Byproducts>> BYPRODUCTS = ByproductsComponent.LIST.otherKey("byproducts").defaultOptional();
 
+    @Info(params = {
+            @Param(name = "Input", value = "Input Ingredient"),
+            @Param(name = "Output", value = "Output ItemStack"),
+            @Param(name = "current_dimension", value = "specifies the activation dimension where a recipe's input must be processed."),
+            @Param(name = "target_dimension", value = "defines the destination plane for portal-based transformations in cross-dimensional recipes."),
+            @Param(name = "byproducts", value = "Byproducts")
+    })
     RecipeSchema PORTAL_TRANSFORM = new RecipeSchema(
             INPUT,
             RESULT,

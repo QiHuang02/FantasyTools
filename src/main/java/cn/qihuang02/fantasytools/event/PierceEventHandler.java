@@ -33,43 +33,54 @@ public class PierceEventHandler {
             return;
         }
 
-        ResourceKey<Enchantment> enchantmentResourceKey = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "pierce"));
-        Registry<Enchantment> enchantmentRegistry = targetEntity.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
-        Optional<Holder.Reference<Enchantment>> optionalHolder = enchantmentRegistry.getHolder(enchantmentResourceKey);
-
-        Holder.Reference<Enchantment> holder = optionalHolder.get();
-        ItemStack weapon = player.getMainHandItem();
-        int enchantmentLevel = EnchantmentHelper.getTagEnchantmentLevel(holder, weapon);
+        int enchantmentLevel = getEnchantmentLevel(targetEntity, player);
         if (enchantmentLevel <= 0) {
             return;
         }
 
-        Map<UUID, SpearAttachments.SpearData> originalMap = targetEntity.getData(SpearAttachments.SPEARS);
-        Map<UUID, SpearAttachments.SpearData> spearMap = new HashMap<>(originalMap);
+        Map<UUID, SpearAttachments.SpearData> spearMap = getSpearMap(targetEntity);
         UUID attackerUUID = player.getUUID();
         long currentTick = targetEntity.level().getGameTime();
 
-        if (player.isShiftKeyDown()) {
-            FantasyTools.LOGGER.debug("Shift + Attack detected for Pierce.");
-            int currentSpearCount = spearMap.getOrDefault(attackerUUID, new SpearAttachments.SpearData(0, currentTick)).count();
-            float bonusDamage = calculateBonusDamage(enchantmentLevel, targetEntity, currentSpearCount);
-            float originalDamage = event.getOriginalDamage();
-            event.setNewDamage(originalDamage + bonusDamage);
-
-            spearMap.remove(attackerUUID);
-            targetEntity.setData(SpearAttachments.SPEARS, spearMap);
+        if (player.isCrouching()) {
+            handleShiftAttack(event, spearMap, attackerUUID, enchantmentLevel, targetEntity);
             return;
         }
 
+        handleNormalAttack(event, spearMap, attackerUUID, enchantmentLevel, targetEntity, currentTick);
+    }
+
+    private static int getEnchantmentLevel(LivingEntity targetEntity, ServerPlayer player) {
+        ResourceKey<Enchantment> enchantmentResourceKey = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "pierce"));
+        Registry<Enchantment> enchantmentRegistry = targetEntity.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT);
+        Optional<Holder.Reference<Enchantment>> optionalHolder = enchantmentRegistry.getHolder(enchantmentResourceKey);
+        Holder.Reference<Enchantment> holder = optionalHolder.get();
+        ItemStack weapon = player.getMainHandItem();
+        return EnchantmentHelper.getTagEnchantmentLevel(holder, weapon);
+    }
+
+    public static Map<UUID, SpearAttachments.SpearData> getSpearMap(LivingEntity targetEntity) {
+        return new HashMap<>(targetEntity.getData(SpearAttachments.SPEARS));
+    }
+
+    private static void handleShiftAttack(LivingDamageEvent.Pre event, Map<UUID, SpearAttachments.SpearData> spearMap, UUID attackerUUID, int enchantmentLevel, LivingEntity targetEntity) {
+        FantasyTools.LOGGER.debug("Shift + Attack detected for Pierce.");
+        int currentSpearCount = spearMap.getOrDefault(attackerUUID, new SpearAttachments.SpearData(0, targetEntity.level().getGameTime())).count();
+        float bonusDamage = calculateBonusDamage(enchantmentLevel, targetEntity, currentSpearCount);
+        event.setNewDamage(event.getOriginalDamage() + bonusDamage);
+        spearMap.remove(attackerUUID);
+        targetEntity.setData(SpearAttachments.SPEARS, spearMap);
+    }
+
+    private static void handleNormalAttack(LivingDamageEvent.Pre event, Map<UUID, SpearAttachments.SpearData> spearMap, UUID attackerUUID, int enchantmentLevel, LivingEntity targetEntity, long currentTick) {
         SpearAttachments.SpearData currentData = spearMap.getOrDefault(attackerUUID, new SpearAttachments.SpearData(0, currentTick));
         int newSpearCount = currentData.count() + 1;
         int threshold = FTEnchantments.getSpearThreshold(enchantmentLevel);
-        boolean thresholdReached = newSpearCount >= threshold;
-        if (thresholdReached) {
+        if (newSpearCount >= threshold) {
             float bonusDamage = calculateBonusDamage(enchantmentLevel, targetEntity, newSpearCount);
             spearMap.remove(attackerUUID);
-            float originalDamage = event.getOriginalDamage();
-            event.setNewDamage(originalDamage + bonusDamage);
+
+            targetEntity.hurt(targetEntity.damageSources().magic(), bonusDamage);
         } else {
             spearMap.put(attackerUUID, new SpearAttachments.SpearData(newSpearCount, currentTick));
         }
