@@ -14,8 +14,8 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class ServerPayloadHandlers {
@@ -25,21 +25,25 @@ public class ServerPayloadHandlers {
                 if (!validatePayload(packet, context)) return;
 
                 final ServerPlayer player = (ServerPlayer) context.player();
-                final ItemStack hourglass = packet.stack();
-
                 if (!player.server.isSameThread()) {
                     FantasyTools.LOGGER.warn("Packet handled on wrong thread");
                     return;
                 }
 
-                Optional<UUID> optionalUUID = Optional.ofNullable(hourglass.get(FTComponents.OWNER));
-                UUID ownerUUID = player.getUUID();
+                ItemStack hourglass = findActualHourglass(player, packet.stack());
+                if (hourglass == null) {
+                    FantasyTools.LOGGER.warn("Hourglass not found");
+                    return;
+                }
 
-                if (optionalUUID.isEmpty()) {
+                UUID ownerUUID = player.getUUID();
+                UUID existingOwner = hourglass.get(FTComponents.OWNER);
+
+                if (existingOwner == null) {
                     hourglass.set(FTComponents.OWNER, ownerUUID);
-                } else if (!optionalUUID.get().equals(ownerUUID)) {
-                    player.getCooldowns().addCooldown(hourglass.getItem(), FTConfig.COOLDOWN_TICKS.get());
-                    player.displayClientMessage(Component.translatable("item.fantasytools.zhongya.not_owner"), true);
+                    updateCuriosSlots(player, hourglass, ownerUUID);
+                } else if (!existingOwner.equals(ownerUUID)) {
+                    handleNotOwner(player, hourglass);
                     return;
                 }
 
@@ -52,6 +56,45 @@ public class ServerPayloadHandlers {
                 FantasyTools.LOGGER.error("Error handling ACTZY packet", e);
             }
         });
+    }
+
+    private static void handleNotOwner(ServerPlayer player, ItemStack hourglass) {
+        player.getCooldowns().addCooldown(hourglass.getItem(), FTConfig.COOLDOWN_TICKS.get());
+        player.displayClientMessage(Component.translatable("item.fantasytools.zhongya.not_owner"), true);
+    }
+
+    private static void updateCuriosSlots(ServerPlayer player, ItemStack hourglass, UUID ownerUUID) {
+        if (isInCuriosSlot(player, hourglass)) {
+            CuriosApi.getCuriosInventory(player).ifPresent(inv ->
+                    inv.findCurios(stack -> stack.getItem() == hourglass.getItem())
+                            .forEach(slot -> slot.stack().set(FTComponents.OWNER, ownerUUID)));
+        }
+    }
+
+    private static boolean isInCuriosSlot(ServerPlayer player, ItemStack targetStack) {
+        return CuriosApi.getCuriosInventory(player)
+                .map(inv -> !inv.findCurios(stack ->
+                        ItemStack.isSameItemSameComponents(stack, targetStack)).isEmpty())
+                .orElse(false);
+    }
+
+    private static ItemStack findActualHourglass(ServerPlayer player, ItemStack reference) {
+        if (isSameHourglass(player.getMainHandItem(), reference)) {
+            return player.getMainHandItem();
+        }
+        if (isSameHourglass(player.getOffhandItem(), reference)) {
+            return player.getOffhandItem();
+        }
+
+        List<SlotResult> curios = CuriosApi.getCuriosInventory(player)
+                .map(inv -> inv.findCurios(stack -> stack.getItem() == reference.getItem()))
+                .orElse(Collections.emptyList());
+
+        return curios.isEmpty() ? null : curios.get(0).stack();
+    }
+
+    private static boolean isSameHourglass(ItemStack a, ItemStack b) {
+        return a.getItem() instanceof Hourglass && b.getItem() instanceof Hourglass && ItemStack.isSameItem(a, b);
     }
 
     private static void setCooldown(ServerPlayer player) {
@@ -80,18 +123,19 @@ public class ServerPayloadHandlers {
     }
 
     private static boolean hasHourglass(ServerPlayer player, ItemStack hourglass) {
-        boolean inInventory = player.getInventory().contains(hourglass);
+        boolean inHand = player.getMainHandItem().getItem() instanceof Hourglass ||
+                player.getOffhandItem().getItem() instanceof Hourglass;
 
         boolean inCurios = CuriosApi.getCuriosInventory(player)
                 .map(inv -> {
                     List<SlotResult> results = inv.findCurios(stack ->
-                            ItemStack.isSameItem(stack, hourglass)
+                            stack.getItem() == hourglass.getItem()
                     );
                     return !results.isEmpty();
                 })
                 .orElse(false);
 
-        return inInventory || inCurios;
+        return inHand || inCurios;
     }
 
     private static boolean isOnCooldown(ServerPlayer player, ItemStack hourglass) {
