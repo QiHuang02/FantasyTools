@@ -22,7 +22,7 @@ public class CuriosSlotProvider extends CuriosDataProvider {
                 .size(1)
                 .operation("SET")
                 .order(999)
-                .icon(ResourceLocation.fromNamespaceAndPath("curios", "empty_curios_slot"))
+                .icon(ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "slot/hourglass"))
                 .addCosmetic(false)
                 .dropRule(ICurio.DropRule.ALWAYS_KEEP);
         this

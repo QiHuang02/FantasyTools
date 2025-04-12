@@ -1,6 +1,7 @@
 package cn.qihuang02.fantasytools.component;
 
 import cn.qihuang02.fantasytools.FantasyTools;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
@@ -17,6 +18,8 @@ public class FTComponents {
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> OWNER =
             register("owner", builder -> builder.persistent(UUIDUtil.CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> NO_PORTAL_TRANSFORM =
+            register("no_portal_transform", builder -> builder.persistent(Codec.BOOL));
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(
             String name,

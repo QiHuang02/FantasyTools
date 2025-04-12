@@ -36,6 +36,10 @@ public class FTLangProvider extends LanguageProvider {
         this.add("tooltip.fantasytools.portal_transform.no_requirement", "No requirement");
 
         this.add("tooltip.jade.spear.count", "Spear Count: %s");
+        this.add("config.jade.plugin_fantasytools.spear_data", "Spear Data");
+
+        this.add("key.categories.fantasytools", "FantasyTools");
+        this.add("key.fantasytools.activate_zhongya", "Activate Zhongya's Hourglass");
 
         this.add(FTItems.DEMIGUISE_FUR.get(), "Demiguise fur");
         this.add(FTItems.ZHONGYAHOURGLASS.get(), "Zhongya's Hourglass");

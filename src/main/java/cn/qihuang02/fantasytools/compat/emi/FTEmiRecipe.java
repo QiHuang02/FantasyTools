@@ -201,8 +201,8 @@ public class FTEmiRecipe implements EmiRecipe {
                 .filter(byproducts -> index < byproducts.size())
                 .map(byproducts -> {
                     float chance = byproducts.get(index).chance();
-                    int minCount = byproducts.get(index).minCount();
-                    int maxCount = byproducts.get(index).maxCount();
+                    int minCount = byproducts.get(index).counts().min();
+                    int maxCount = byproducts.get(index).counts().max();
                     return List.<Component>of(
                             Component.translatable("tooltip.fantasytools.portal_transform.byproduct").withStyle(ChatFormatting.GRAY),
                             Component.translatable("tooltip.fantasytools.portal_transform.byproduct.chance", chance * 100).withStyle(ChatFormatting.GRAY),
