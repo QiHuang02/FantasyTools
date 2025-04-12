@@ -31,6 +31,8 @@ public record PortalTransformRecipe(
         Optional<List<Byproducts>> byproducts
 ) implements Recipe<SimpleItemInput> {
     private static final int MAX_BYPRODUCT_TYPES = 9;
+    private static final String ERROR_EMPTY_RESULT = "Recipe result byproduct cannot be empty";
+    private static final String ERROR_TOO_MANY_BYPRODUCTS = "Recipe cannot have more than %d byproduct types, found %d";
 
     @Override
     public boolean matches(SimpleItemInput input, Level level) {
@@ -45,27 +47,18 @@ public record PortalTransformRecipe(
      */
     private static DataResult<PortalTransformRecipe> validate(PortalTransformRecipe recipe) {
         if (recipe.result.isEmpty()) {
-            return DataResult.error(() -> "Recipe result byproduct cannot be empty");
+            return DataResult.error(() -> ERROR_EMPTY_RESULT);
         }
 
-        List<Byproducts> byproducts = recipe.byproducts().orElse(Collections.emptyList());
+        List<Byproducts> byproducts = recipe.byproducts().orElseGet(Collections::emptyList);
         if (byproducts.size() > MAX_BYPRODUCT_TYPES) {
-            return DataResult.error(() -> "Recipe cannot have more than " + MAX_BYPRODUCT_TYPES + " byproduct types, found " + byproducts.size());
+            return DataResult.error(() -> String.format(ERROR_TOO_MANY_BYPRODUCTS, MAX_BYPRODUCT_TYPES, byproducts.size()));
         }
 
         for (int i = 0; i < byproducts.size(); i++) {
-            if (byproducts.get(i).byproduct().isEmpty()) {
-                int finalI = i;
-                return DataResult.error(() -> "Byproduct byproduct at index " + finalI + " cannot be empty");
-            }
-
-            if (byproducts.get(i).minCount() <= 0 || byproducts.get(i).maxCount() < byproducts.get(i).minCount()) {
-                int finalI1 = i;
-                return DataResult.error(() -> "Byproduct at index " + finalI1 + " has invalid min/max counts");
-            }
-            if (byproducts.get(i).chance() <= 0 || byproducts.get(i).chance() > 1) {
-                int finalI2 = i;
-                return DataResult.error(() -> "Byproduct at index " + finalI2 + " has invalid chance (must be > 0 and <= 1)");
+            String error = Byproducts.validate(byproducts.get(i), i);
+            if (error != null) {
+                return DataResult.error(() -> error);
             }
         }
         return DataResult.success(recipe);
@@ -78,8 +71,7 @@ public record PortalTransformRecipe(
 
     @Override
     public ItemStack assemble(SimpleItemInput input, HolderLookup.Provider registries) {
-        ItemStack resultStack = result.copy();
-        return resultStack;
+        return result.copy();
     }
 
     @Override
@@ -98,7 +90,7 @@ public record PortalTransformRecipe(
     }
 
     public Optional<List<Byproducts>> getByproducts() {
-        return byproducts.map(Collections::unmodifiableList);
+        return byproducts.map(ArrayList::new);
     }
 
     @Override
