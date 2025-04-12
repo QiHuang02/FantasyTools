@@ -9,13 +9,14 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import top.theillusivec4.curios.api.CuriosApi;
 
 @EventBusSubscriber(modid = FantasyTools.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientTickEvents {
     @SubscribeEvent
-    public static void registerKeyInput(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
+    public static void registerKeyInput(ClientTickEvent.Post event) {
         Player player = Minecraft.getInstance().player;
         if (player == null) return;
 
