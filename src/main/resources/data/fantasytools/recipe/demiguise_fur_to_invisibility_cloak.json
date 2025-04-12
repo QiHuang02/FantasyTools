@@ -1,0 +1,10 @@
+{
+  "type": "fantasytools:portal_transform",
+  "input": {
+    "item": "fantasytools:demiguise_fur"
+  },
+  "result": {
+    "id": "fantasytools:invisibility_cloak"
+  },
+  "current_dimension": "minecraft:overworld"
+}

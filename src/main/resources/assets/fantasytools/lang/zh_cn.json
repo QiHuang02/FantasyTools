@@ -1,4 +1,5 @@
 {
+  "config.jade.plugin_fantasytools.spear_data": "撕裂层数",
   "effect.fantasytools.stasis": "凝滞",
   "emi.category.fantasytools.portal_transform": "传送嬗变",
   "enchantment.fantasytools.pierce": "撕裂",
@@ -11,13 +12,15 @@
   "item.fantasytools.zhongya.not_owner": "你不是这件物品的主人，你不能使用它！",
   "item.fantasytools.zhongya.owner": "所属之人: %s",
   "item.fantasytools.zhongya_hourglass": "中娅沙漏",
+  "key.categories.fantasytools": "FantasyTools",
+  "key.fantasytools.activate_zhongya": "激活中娅沙漏",
   "tag.item.curios.hourglass": "沙漏",
   "tooltip.fantasytools.portal_transform.byproduct": "副产物",
   "tooltip.fantasytools.portal_transform.byproduct.chance": "几率: %s",
   "tooltip.fantasytools.portal_transform.byproduct.max_count": "最大数量: %s",
   "tooltip.fantasytools.portal_transform.byproduct.min_count": "最小数量: %s",
-  "tooltip.fantasytools.portal_transform.dimension": "Dimension Requirement",
-  "tooltip.fantasytools.portal_transform.no_requirement": "No requirement",
-  "tooltip.fantasytools.portal_transform.unknown_dimension": "Unknown dimension",
+  "tooltip.fantasytools.portal_transform.dimension": "维度要求",
+  "tooltip.fantasytools.portal_transform.no_requirement": "无要求",
+  "tooltip.fantasytools.portal_transform.unknown_dimension": "未知维度",
   "tooltip.jade.spear.count": "撕裂层数: %s"
 }

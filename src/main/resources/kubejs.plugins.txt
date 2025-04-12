@@ -1,1 +1,1 @@
-cn.qihuang02.fantasytools.compat.kubejs.KubeJSPortalTransformPlugin
+cn.qihuang02.fantasytools.compat.kubejs.FTKubeJSPlugin
