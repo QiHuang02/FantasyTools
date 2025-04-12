@@ -13,6 +13,9 @@ public record Byproducts(
         float chance,
         CountRange counts
 ) {
+    public static final String ERROR_EMPTY_BYPRODUCT = "Byproduct byproduct at index %d cannot be empty";
+    public static final String ERROR_INVALID_COUNTS = "Byproduct at index %d has invalid min/max counts";
+    public static final String ERROR_INVALID_CHANCE = "Byproduct at index %d has invalid chance (must be > 0 and <= 1)";
 
     public static final MapCodec<Byproducts> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             ItemStack.STRICT_CODEC.fieldOf("byproduct").forGetter(Byproducts::byproduct),
@@ -27,25 +30,20 @@ public record Byproducts(
             Byproducts::new
     );
 
-    public ItemStack byproduct() {
-        return byproduct;
-    }
 
-    public float chance() {
-        return chance;
-    }
+    public static String validate(Byproducts byproduct, int index) {
+        if (byproduct.byproduct().isEmpty()) {
+            return String.format(ERROR_EMPTY_BYPRODUCT, index);
+        }
 
-    public int minCount() {
-        return counts.min();
-    }
+        if (byproduct.counts().min() <= 0 || byproduct.counts().max() < byproduct.counts().min()) {
+            return String.format(ERROR_INVALID_COUNTS, index);
+        }
 
-    public int maxCount() {
-        return counts.max();
-    }
+        if (byproduct.chance() <= 0 || byproduct.chance() > 1) {
+            return String.format(ERROR_INVALID_CHANCE, index);
+        }
 
-    public boolean isValid() {
-        return !byproduct.isEmpty() &&
-                chance > 0 && chance <= 1 &&
-                counts.isValid();
+        return null;
     }
 }
