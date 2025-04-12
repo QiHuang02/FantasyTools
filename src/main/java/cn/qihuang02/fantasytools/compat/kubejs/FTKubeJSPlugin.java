@@ -12,7 +12,7 @@ import dev.latvian.mods.kubejs.recipe.schema.RecipeFactoryRegistry;
 import dev.latvian.mods.kubejs.recipe.schema.RecipeSchemaRegistry;
 import dev.latvian.mods.kubejs.script.BindingRegistry;
 
-public class KubeJSPortalTransformPlugin implements KubeJSPlugin {
+public class FTKubeJSPlugin implements KubeJSPlugin {
 
     @Override
     public void registerBindings(BindingRegistry bindings) {
