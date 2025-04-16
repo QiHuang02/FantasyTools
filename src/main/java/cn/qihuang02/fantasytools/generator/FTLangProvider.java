@@ -31,8 +31,8 @@ public class FTLangProvider extends LanguageProvider {
         this.add("tooltip.fantasytools.portal_transform.byproduct.min_count", "Min Count: %s");
         this.add("tooltip.fantasytools.portal_transform.byproduct.max_count", "Max Count: %s");
 
-        this.add("tooltip.fantasytools.portal_transform.dimension", "Dimension Requirement");
-        this.add("tooltip.fantasytools.portal_transform.unknown_dimension", "Unknown dimension");
+        this.add("tooltip.fantasytools.portal_transform.dimensions", "Dimension Requirement");
+        this.add("tooltip.fantasytools.portal_transform.unknown_dimension", "Unknown dimensions");
         this.add("tooltip.fantasytools.portal_transform.no_requirement", "No requirement");
 
         this.add("tooltip.jade.spear.count", "Spear Count: %s");

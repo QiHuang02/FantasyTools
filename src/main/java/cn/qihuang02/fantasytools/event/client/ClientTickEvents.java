@@ -1,8 +1,8 @@
 package cn.qihuang02.fantasytools.event.client;
 
 import cn.qihuang02.fantasytools.FantasyTools;
-import cn.qihuang02.fantasytools.item.custom.Hourglass;
 import cn.qihuang02.fantasytools.network.packet.ACTZYPacket;
+import cn.qihuang02.fantasytools.util.HourglassUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -11,28 +11,26 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import top.theillusivec4.curios.api.CuriosApi;
 
 @EventBusSubscriber(modid = FantasyTools.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientTickEvents {
     @SubscribeEvent
-    public static void registerKeyInput(ClientTickEvent.Post event) {
-        Player player = Minecraft.getInstance().player;
-        if (player == null) return;
+    public static void registerKeyInput(ClientTickEvent.Pre event) {
+        Minecraft mc = Minecraft.getInstance();
+        Player player = mc.player;
 
-        if (KeyMappings.ACTIVATE_ZHONGYA_KEY.consumeClick()) {
-            CuriosApi.getCuriosInventory(player).ifPresent(handler -> {
-                handler.getCurios().values().forEach(curios -> {
-                    for (int i = 0; i < curios.getSlots(); i++) {
-                        ItemStack stack = curios.getStacks().getStackInSlot(i);
-                        if (stack.getItem() instanceof Hourglass) {
-                            ACTZYPacket packet = new ACTZYPacket(stack);
-                            PacketDistributor.sendToServer(packet);
-                            FantasyTools.LOGGER.info("Send packet {} to server", stack);
-                        }
-                    }
-                });
-            });
+        if (player == null || !KeyMappings.ACTIVATE_ZHONGYA_KEY.consumeClick()) {
+            return;
+        }
+
+        ItemStack hourglassToActivate = HourglassUtils.findFirstEligibleHourglassClient(player);
+
+        if (!hourglassToActivate.isEmpty()) {
+            FantasyTools.LOGGER.debug("Client:Find the available hourglass {} and prepare to send the packet.", hourglassToActivate.getDisplayName().getString());
+            ACTZYPacket packet = new ACTZYPacket(hourglassToActivate);
+            PacketDistributor.sendToServer(packet);
+        } else {
+            FantasyTools.LOGGER.debug("Client:Press the activation key, but no available hourglass was found (maybe missing or are all in cooling).");
         }
     }
 }

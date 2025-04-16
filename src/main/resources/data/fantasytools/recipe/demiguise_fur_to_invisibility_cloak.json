@@ -6,5 +6,10 @@
   "result": {
     "id": "fantasytools:invisibility_cloak"
   },
-  "current_dimension": "minecraft:overworld"
+  "dimensions": [
+    {
+      "current_dimension": "minecraft:overworld",
+      "target_dimension": "minecraft:the_nether"
+    }
+  ]
 }

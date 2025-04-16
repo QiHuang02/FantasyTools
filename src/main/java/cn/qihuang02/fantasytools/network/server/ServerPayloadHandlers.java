@@ -4,146 +4,137 @@ import cn.qihuang02.fantasytools.FTConfig;
 import cn.qihuang02.fantasytools.FantasyTools;
 import cn.qihuang02.fantasytools.component.FTComponents;
 import cn.qihuang02.fantasytools.effect.FTEffect;
-import cn.qihuang02.fantasytools.item.custom.Hourglass;
 import cn.qihuang02.fantasytools.network.packet.ACTZYPacket;
+import cn.qihuang02.fantasytools.util.HourglassUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import top.theillusivec4.curios.api.CuriosApi;
-import top.theillusivec4.curios.api.SlotResult;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 public class ServerPayloadHandlers {
+    private static final String MSG_NOT_OWNER_KEY = "item.fantasytools.zhongya.not_owner";
+
+    /**
+     * 处理 ACTZYPacket 数据包的核心逻辑。
+     *
+     * @param packet  收到的数据包实例
+     * @param context 数据包的上下文，包含发送者等信息
+     */
     public static void handleACTZY(final ACTZYPacket packet, final IPayloadContext context) {
         context.enqueueWork(() -> {
             try {
-                if (!validatePayload(packet, context)) return;
-
-                final ServerPlayer player = (ServerPlayer) context.player();
-                if (!player.server.isSameThread()) {
-                    FantasyTools.LOGGER.warn("Packet handled on wrong thread");
+                ServerPlayer player = getServerPlayer(context);
+                if (player == null || !packet.isValid()) {
+                    FantasyTools.LOGGER.warn("Invalid ACTZY packet or context Player is empty: {}", packet);
                     return;
                 }
 
-                ItemStack hourglass = findActualHourglass(player, packet.stack());
-                if (hourglass == null) {
-                    FantasyTools.LOGGER.warn("Hourglass not found");
+                Item hourglassItemFromPacket = packet.stack().getItem();
+                ItemStack hourglassInstance = HourglassUtils.findFirstPresentHourglass(player);
+
+                if (hourglassInstance.isEmpty()) {
+                    FantasyTools.LOGGER.warn("Server: Player {} sent an ACTZY packet, but no item was found in its handheld or Curios {}",
+                            player.getName().getString(), hourglassItemFromPacket.getDescriptionId());
+                    return;
+                }
+                if (!hourglassInstance.is(hourglassItemFromPacket)) {
+                    FantasyTools.LOGGER.error("Server: The item found {} does not match the item {} in the packet! Player {}",
+                            hourglassInstance.getDescriptionId(), hourglassItemFromPacket.getDescriptionId(), player.getName().getString());
                     return;
                 }
 
                 UUID ownerUUID = player.getUUID();
-                UUID existingOwner = hourglass.get(FTComponents.OWNER);
+                UUID existingOwner = hourglassInstance.get(FTComponents.OWNER);
 
                 if (existingOwner == null) {
-                    hourglass.set(FTComponents.OWNER, ownerUUID);
-                    updateCuriosSlots(player, hourglass, ownerUUID);
+                    hourglassInstance.set(FTComponents.OWNER, ownerUUID);
+                    FantasyTools.LOGGER.debug("Set owner {} for item {}", ownerUUID, hourglassInstance.getDescriptionId());
                 } else if (!existingOwner.equals(ownerUUID)) {
-                    handleNotOwner(player, hourglass);
+                    handleNotOwner(player, hourglassItemFromPacket);
                     return;
                 }
 
-                if (isOnCooldown(player, hourglass)) return;
-                if (!hasHourglass(player, hourglass)) return;
+                if (player.getCooldowns().isOnCooldown(hourglassItemFromPacket)) {
+                    FantasyTools.LOGGER.debug("Player {} tries to use item {}, but the item is in cooldown", player.getName().getString(), hourglassItemFromPacket.getDescriptionId());
+                    return;
+                }
 
                 applyStasisEffect(player);
-                setCooldown(player);
+
+                setGlobalCooldown(player, hourglassItemFromPacket);
+
             } catch (Exception e) {
-                FantasyTools.LOGGER.error("Error handling ACTZY packet", e);
+                FantasyTools.LOGGER.error("An error occurred while processing ACTZY packets, player: {}",
+                        context.player() != null ? context.player().getName().getString() : "[未知]", e);
             }
         });
     }
 
-    private static void handleNotOwner(ServerPlayer player, ItemStack hourglass) {
-        player.getCooldowns().addCooldown(hourglass.getItem(), FTConfig.COOLDOWN_TICKS.get());
-        player.displayClientMessage(Component.translatable("item.fantasytools.zhongya.not_owner"), true);
+    /**
+     * 从上下文中安全地获取 ServerPlayer。
+     *
+     * @param context 数据包上下文
+     * @return ServerPlayer 实例，如果上下文中的玩家不是 ServerPlayer 则返回 null
+     */
+    private static ServerPlayer getServerPlayer(IPayloadContext context) {
+        return context.player() instanceof ServerPlayer sp ? sp : null;
     }
 
-    private static void updateCuriosSlots(ServerPlayer player, ItemStack hourglass, UUID ownerUUID) {
-        if (isInCuriosSlot(player, hourglass)) {
-            CuriosApi.getCuriosInventory(player).ifPresent(inv ->
-                    inv.findCurios(stack -> stack.getItem() == hourglass.getItem())
-                            .forEach(slot -> slot.stack().set(FTComponents.OWNER, ownerUUID)));
-        }
+    /**
+     * 处理玩家尝试使用非自己所有的沙漏的情况。
+     *
+     * @param player 尝试使用的玩家
+     * @param item   沙漏的物品类型 (Item)
+     */
+    private static void handleNotOwner(ServerPlayer player, Item item) {
+        player.getCooldowns().addCooldown(item, FTConfig.COOLDOWN_TICKS.get());
+        player.displayClientMessage(Component.translatable(MSG_NOT_OWNER_KEY), true);
+        FantasyTools.LOGGER.warn("Player {} Try to use an hourglass that does not belong to him/her ({})", player.getName().getString(), item.getDescriptionId());
     }
 
-    private static boolean isInCuriosSlot(ServerPlayer player, ItemStack targetStack) {
-        return CuriosApi.getCuriosInventory(player)
-                .map(inv -> !inv.findCurios(stack ->
-                        ItemStack.isSameItemSameComponents(stack, targetStack)).isEmpty())
-                .orElse(false);
-    }
 
-    private static ItemStack findActualHourglass(ServerPlayer player, ItemStack reference) {
-        if (isSameHourglass(player.getMainHandItem(), reference)) {
-            return player.getMainHandItem();
-        }
-        if (isSameHourglass(player.getOffhandItem(), reference)) {
-            return player.getOffhandItem();
-        }
-
-        List<SlotResult> curios = CuriosApi.getCuriosInventory(player)
-                .map(inv -> inv.findCurios(stack -> stack.getItem() == reference.getItem()))
-                .orElse(Collections.emptyList());
-
-        return curios.isEmpty() ? null : curios.get(0).stack();
-    }
-
-    private static boolean isSameHourglass(ItemStack a, ItemStack b) {
-        return a.getItem() instanceof Hourglass && b.getItem() instanceof Hourglass && ItemStack.isSameItem(a, b);
-    }
-
-    private static void setCooldown(ServerPlayer player) {
-        int cooldown = FTConfig.COOLDOWN_TICKS.get();
-
-        player.getInventory().items.forEach(stack -> {
-            if (stack.getItem() instanceof Hourglass) {
-                player.getCooldowns().addCooldown(stack.getItem(), cooldown);
-            }
-        });
-
-        CuriosApi.getCuriosInventory(player).ifPresent(inv -> {
-            inv.findCurios(stack -> stack.getItem() instanceof Hourglass)
-                    .forEach(slot ->
-                            player.getCooldowns().addCooldown(slot.stack().getItem(), cooldown)
-                    );
-        });
-    }
-
+    /**
+     * 向玩家施加静滞效果。
+     *
+     * @param player 目标玩家
+     */
     private static void applyStasisEffect(ServerPlayer player) {
         int duration = FTConfig.STASIS_DURATION_TICKS.get();
-        MobEffectInstance effect = new MobEffectInstance(FTEffect.STASIS_EFFECT, duration, 4, false, true, true);
+        int amplifier = 4;
+        boolean ambient = false;
+        boolean showParticles = true;
+        boolean showIcon = true;
 
-        player.addEffect(effect);
+        MobEffectInstance effectInstance = new MobEffectInstance(
+                FTEffect.STASIS_EFFECT,
+                duration,
+                amplifier,
+                ambient,
+                showParticles,
+                showIcon
+        );
+
+        player.addEffect(effectInstance);
         player.fallDistance = 0.0F;
+        FantasyTools.LOGGER.debug("Has applied static effect to player {} for {} ticks", player.getName().getString(), duration);
     }
 
-    private static boolean hasHourglass(ServerPlayer player, ItemStack hourglass) {
-        boolean inHand = player.getMainHandItem().getItem() instanceof Hourglass ||
-                player.getOffhandItem().getItem() instanceof Hourglass;
-
-        boolean inCurios = CuriosApi.getCuriosInventory(player)
-                .map(inv -> {
-                    List<SlotResult> results = inv.findCurios(stack ->
-                            stack.getItem() == hourglass.getItem()
-                    );
-                    return !results.isEmpty();
-                })
-                .orElse(false);
-
-        return inHand || inCurios;
-    }
-
-    private static boolean isOnCooldown(ServerPlayer player, ItemStack hourglass) {
-        return player.getCooldowns().isOnCooldown(hourglass.getItem());
-    }
-
-    private static boolean validatePayload(ACTZYPacket packet, IPayloadContext context) {
-        if (!(context.player() instanceof ServerPlayer)) return false;
-        return packet.isValid();
+    /**
+     * 为指定的物品类型在玩家身上设置全局冷却。
+     *
+     * @param player         目标玩家
+     * @param itemToCooldown 需要设置冷却的物品类型 (Item)
+     */
+    private static void setGlobalCooldown(ServerPlayer player, Item itemToCooldown) {
+        int cooldownTicks = FTConfig.COOLDOWN_TICKS.get();
+        if (cooldownTicks > 0) {
+            player.getCooldowns().addCooldown(itemToCooldown, cooldownTicks);
+            FantasyTools.LOGGER.debug("Cooldown {} ticks have been set for the item type {} of player {}",
+                    player.getName().getString(), itemToCooldown.getDescriptionId(), cooldownTicks);
+        }
     }
 }

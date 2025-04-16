@@ -38,6 +38,19 @@ public final class ByproductsBinding {
     }
 
     private static Byproducts create(ItemStack item, float chance, int min, int max) {
+        if (item == null || item.isEmpty()) {
+            throw new IllegalArgumentException("Byproduct ItemStack cannot be null or empty.");
+        }
+        if (chance < 0.0f || chance > 1.0f) {
+            throw new IllegalArgumentException("Byproduct chance must be between 0.0 and 1.0 (inclusive), got: " + chance);
+        }
+        if (min <= 0) {
+            throw new IllegalArgumentException("Byproduct minimum count must be greater than 0, got: " + min);
+        }
+        if (max < min) {
+            throw new IllegalArgumentException("Byproduct maximum count (" + max + ") cannot be less than minimum count (" + min + ")");
+        }
+
         return new Byproducts(item, chance, new CountRange(min, max));
     }
 
