@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Invis_cloak extends ArmorItem {
-    public Invis_cloak(@NotNull Properties properties) {
+public class InvisCloak extends ArmorItem {
+    public InvisCloak(@NotNull Properties properties) {
         super(
                 FTArmorMaterials.INVCLOAK_ARMOR_MATERIAL,
                 Type.CHESTPLATE,

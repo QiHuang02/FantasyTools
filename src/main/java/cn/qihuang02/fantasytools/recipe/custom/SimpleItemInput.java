@@ -20,4 +20,5 @@ public record SimpleItemInput(
     public boolean isEmpty() {
         return item.isEmpty();
     }
+
 }

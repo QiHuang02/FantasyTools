@@ -20,6 +20,18 @@ public class FTItemTagProvider extends ItemTagsProvider {
 
     private static final TagKey<Item> CURIOS_HOURGLASS =
             ItemTags.create(ResourceLocation.fromNamespaceAndPath("curios", "hourglass"));
+    private static final TagKey<Item> CURIOS_BAMBOO_COPTER =
+            ItemTags.create(ResourceLocation.fromNamespaceAndPath("curios", "bamboo_copter"));
+
+    private static final TagKey<Item> INGOTS =
+            ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ingots"));
+    private static final TagKey<Item> GEMS =
+            ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems"));
+
+    private static final TagKey<Item> FULL_METAL_1 =
+            ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ingots/full_metal"));
+    private static final TagKey<Item> FULL_METAL_2 =
+            ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "gems/full_metal"));
 
     public FTItemTagProvider(
             PackOutput output,
@@ -33,6 +45,21 @@ public class FTItemTagProvider extends ItemTagsProvider {
     protected void addTags(HolderLookup.@NotNull Provider provider) {
         this
                 .tag(CURIOS_HOURGLASS)
-                .add(FTItems.ZHONGYAHOURGLASS.get());
+                .add(FTItems.ZHONGYA_HOURGLASS.get());
+        this
+                .tag(CURIOS_BAMBOO_COPTER)
+                .add(FTItems.BAMBOO_COPTER.get());
+        this
+                .tag(FULL_METAL_1)
+                .add(FTItems.FULL_METAL.get());
+        this
+                .tag(FULL_METAL_2)
+                .add(FTItems.FULL_METAL.get());
+        this
+                .tag(INGOTS)
+                .add(FTItems.FULL_METAL.get());
+        this
+                .tag(GEMS)
+                .add(FTItems.FULL_METAL.get());
     }
 }

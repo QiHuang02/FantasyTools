@@ -24,6 +24,9 @@ public class FTLangProvider extends LanguageProvider {
         this.add("enchantment.fantasytools.pierce", "Pierce");
 
         this.add("tag.item.curios.hourglass", "Hourglass");
+        this.add("tag.item.curios.bamboo_copter", "Bamboo Copter");
+        this.add("tag.item.c.ingots.full_metal", "Full Metal");
+        this.add("tag.item.c.gems.full_metal", "Full Metal");
 
         this.add("emi.category.fantasytools.portal_transform", "Portal Transform");
         this.add("tooltip.fantasytools.portal_transform.byproduct", "Byproduct");
@@ -42,7 +45,9 @@ public class FTLangProvider extends LanguageProvider {
         this.add("key.fantasytools.activate_zhongya", "Activate Zhongya's Hourglass");
 
         this.add(FTItems.DEMIGUISE_FUR.get(), "Demiguise fur");
-        this.add(FTItems.ZHONGYAHOURGLASS.get(), "Zhongya's Hourglass");
+        this.add(FTItems.ZHONGYA_HOURGLASS.get(), "Zhongya's Hourglass");
         this.add(FTItems.INVIS_CLOAK.get(), "Invisibility Cloak");
+        this.add(FTItems.BAMBOO_COPTER.get(), "Bamboo Copter");
+        this.add(FTItems.FULL_METAL.get(), "Full Metal");
     }
 }
