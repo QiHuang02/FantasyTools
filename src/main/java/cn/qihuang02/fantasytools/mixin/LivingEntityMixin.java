@@ -1,6 +1,6 @@
 package cn.qihuang02.fantasytools.mixin;
 
-import cn.qihuang02.fantasytools.util.StasisUtil;
+import cn.qihuang02.fantasytools.effect.FTEffect;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,7 +21,7 @@ public abstract class LivingEntityMixin {
     )
     private void onTravel(Vec3 travelVector, CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (StasisUtil.isStasis(entity)) {
+        if (entity.hasEffect(FTEffect.STASIS_EFFECT)) {
             ci.cancel();
         }
     }
@@ -33,7 +33,7 @@ public abstract class LivingEntityMixin {
     )
     private void onHurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (StasisUtil.isStasis(entity)) {
+        if (entity.hasEffect(FTEffect.STASIS_EFFECT)) {
             cir.setReturnValue(true);
         }
     }
@@ -45,7 +45,7 @@ public abstract class LivingEntityMixin {
     )
     private void onItemPickup(CallbackInfo ci) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (StasisUtil.isStasis(entity)) {
+        if (entity.hasEffect(FTEffect.STASIS_EFFECT)) {
             ci.cancel();
         }
     }
@@ -57,7 +57,7 @@ public abstract class LivingEntityMixin {
     )
     private void onAddEffect(MobEffectInstance effectInstance, CallbackInfoReturnable<Boolean> cir) {
         LivingEntity entity = (LivingEntity) (Object) this;
-        if (StasisUtil.isStasis(entity)) {
+        if (entity.hasEffect(FTEffect.STASIS_EFFECT)) {
             cir.setReturnValue(true);
         }
     }

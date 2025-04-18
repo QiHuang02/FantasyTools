@@ -1,6 +1,6 @@
 package cn.qihuang02.fantasytools.mixin;
 
-import cn.qihuang02.fantasytools.util.StasisUtil;
+import cn.qihuang02.fantasytools.effect.FTEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,7 +17,7 @@ public class PlayerMixin {
     )
     private void onAttack(Entity target, CallbackInfo ci) {
         Player player = (Player)(Object)this;
-        if (StasisUtil.isStasis(player)) {
+        if (player.hasEffect(FTEffect.STASIS_EFFECT)) {
             ci.cancel();
         }
     }
