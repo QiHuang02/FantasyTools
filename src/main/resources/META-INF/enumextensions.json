@@ -5,8 +5,17 @@
       "name": "FANTASYTOOLS_LEGENDARY",
       "constructor": "(ILjava/lang/String;Ljava/util/function/UnaryOperator;)V",
       "parameters": {
-        "class": "cn/qihuang02/fantasytools/enumProxy/FTRarity",
+        "class": "cn/qihuang02/fantasytools/enumproxy/FTRarity",
         "field": "LEGENDARY_RARITY_ENUM_PROXY"
+      }
+    },
+    {
+      "enum": "net/minecraft/world/item/Rarity",
+      "name": "FANTASYTOOLS_UNIQUE",
+      "constructor": "(ILjava/lang/String;Ljava/util/function/UnaryOperator;)V",
+      "parameters": {
+        "class": "cn/qihuang02/fantasytools/enumproxy/FTRarity",
+        "field": "UNIQUE_RARITY_ENUM_PROXY"
       }
     }
   ]
