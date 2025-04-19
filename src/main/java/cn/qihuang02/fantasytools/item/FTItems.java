@@ -36,7 +36,6 @@ public class FTItems {
     public static final DeferredItem<Item> FULL_METAL =
             ITEMS.register("full_metal", () -> new FullMetal(
                     new Item.Properties()
-                            .stacksTo(99)
             ));
 
     public static void register(IEventBus eventBus) {

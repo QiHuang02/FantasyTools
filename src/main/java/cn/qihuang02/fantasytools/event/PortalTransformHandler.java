@@ -36,7 +36,6 @@ public class PortalTransformHandler {
         Level level = entity.level();
 
         if (entity instanceof ItemEntity itemEntity) {
-            ItemStack stack = itemEntity.getItem();
             if (hasNoPortalTransform(itemEntity)) {
                 event.setCanceled(true);
                 return;
