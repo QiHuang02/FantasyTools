@@ -17,7 +17,8 @@ public class LevelComponent implements RecipeComponent<ResourceKey<Level>> {
     private static final Codec<ResourceKey<Level>> CODEC = ResourceKey.codec(Registries.DIMENSION);
     private static final String COMPONENT_NAME = "fantasytools:dimension";
 
-    public LevelComponent() {}
+    public LevelComponent() {
+    }
 
     @Override
     public Codec<ResourceKey<Level>> codec() {

@@ -47,6 +47,7 @@ public record ACTZYPacket(ItemStack stack) implements CustomPacketPayload {
     /**
      * 在服务器端进行的基本验证。
      * 检查包含的 ItemStack 是否非空且确实是一个沙漏物品。
+     *
      * @return 如果数据包内容有效则返回 true，否则返回 false。
      */
     public boolean isValid() {
@@ -55,6 +56,7 @@ public record ACTZYPacket(ItemStack stack) implements CustomPacketPayload {
 
     /**
      * 提供一个易于阅读的字符串表示形式，用于日志记录和调试。
+     *
      * @return 数据包内容的字符串描述
      */
     @Override

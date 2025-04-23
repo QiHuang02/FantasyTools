@@ -3,14 +3,18 @@ package cn.qihuang02.fantasytools.network.server;
 import cn.qihuang02.fantasytools.FTConfig;
 import cn.qihuang02.fantasytools.FantasyTools;
 import cn.qihuang02.fantasytools.component.FTComponents;
+import cn.qihuang02.fantasytools.data.PocketDataManager;
+import cn.qihuang02.fantasytools.data.PocketInventory;
 import cn.qihuang02.fantasytools.effect.FTEffect;
 import cn.qihuang02.fantasytools.item.custom.FourDimensionalPocket;
 import cn.qihuang02.fantasytools.menu.PocketMenu;
 import cn.qihuang02.fantasytools.network.packet.ACTZYPacket;
 import cn.qihuang02.fantasytools.network.packet.ChangePocketPagePacket;
 import cn.qihuang02.fantasytools.network.packet.OpenPocketPacket;
+import cn.qihuang02.fantasytools.network.packet.SyncPocketPagePacket;
 import cn.qihuang02.fantasytools.util.HourglassUtils;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.MenuProvider;
@@ -20,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -179,7 +184,23 @@ public class ServerPayloadHandlers {
                 buf.writeVarInt(0);
             });
 
-            FantasyTools.LOGGER.debug("Opened pocket {} for player {}", pocketId.toString().substring(0, 8), player.getName().getString());
+            if (player.containerMenu instanceof PocketMenu pocketMenu && player.level() instanceof ServerLevel serverLevel) {
+                PocketInventory realInventory = PocketDataManager.get(serverLevel).getOrCreateInventory(pocketId);
+
+                int initialPage = 0;
+                int currentMaxPages = realInventory.getMaxPages();
+                boolean canAddPage = realInventory.canAddPage();
+                boolean initialCanGoNext = canAddPage || (initialPage + 1) < currentMaxPages;
+
+                SyncPocketPagePacket initialSyncPacket = new SyncPocketPagePacket(initialPage, initialCanGoNext, currentMaxPages);
+                PacketDistributor.sendToPlayer(player, initialSyncPacket);
+
+                FantasyTools.LOGGER.debug("Opened pocket {}. Sent initial sync: page={}, canGoNext={}, maxPages={}",
+                        pocketId.toString().substring(0, 8), initialPage, initialCanGoNext, currentMaxPages);
+
+            } else {
+                FantasyTools.LOGGER.error("Failed to get PocketMenu instance or ServerLevel after opening menu for player {}", player.getName().getString());
+            }
         });
     }
 

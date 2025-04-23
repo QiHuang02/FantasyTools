@@ -82,7 +82,8 @@ public class ClientPayloadHandlers {
             if (mc.player != null) {
                 AbstractContainerMenu currentMenu = mc.player.containerMenu;
                 if (currentMenu instanceof PocketMenu pocketMenu) {
-                    pocketMenu.setCurrentPageClient(packet.newPage());
+                    // 调用修改后的同步方法，传入页面、canGoNext 和 maxPages 状态
+                    pocketMenu.syncClientState(packet.newPage(), packet.canGoNext(), packet.maxPages()); // 添加 packet.maxPages()
                 }
             }
         });

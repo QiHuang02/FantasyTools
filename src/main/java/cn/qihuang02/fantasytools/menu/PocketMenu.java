@@ -22,18 +22,23 @@ import java.util.UUID;
 
 public class PocketMenu extends AbstractContainerMenu {
     private static final int PLAYER_INV_START_X = 8;
-    private static final int PLAYER_INV_START_Y = 86;
-    private static final int PLAYER_HOTBAR_START_Y = 144;
+    private static final int PLAYER_INV_START_Y = 140;
+    private static final int PLAYER_HOTBAR_START_Y = 198;
+
     private static final int POCKET_INV_START_X = 8;
     private static final int POCKET_INV_START_Y = 18;
     private static final int SLOTS_PER_ROW = 9;
-    private static final int POCKET_ROWS = 3;
+
+    private static final int POCKET_ROWS = 6;
     private static final int POCKET_SLOTS_END = PocketInventory.PAGE_SIZE;
 
     private final UUID pocketUUID;
     private final PocketInventory pocketInventory;
     private final Inventory playerInventory;
     private int currentPage;
+
+    private int clientMaxPages = 1;
+    private boolean clientCanGoNext;
 
     public PocketMenu(int containerId, Inventory playerInv, UUID pocketUUID, int initialPage) {
         this(containerId, playerInv, pocketUUID, initialPage, getPocketInventoryFromServer(playerInv.player, pocketUUID));
@@ -204,7 +209,6 @@ public class PocketMenu extends AbstractContainerMenu {
                 if (slotStack.getCount() > PocketInventory.STACK_LIMIT) {
                     return ItemStack.EMPTY;
                 }
-
                 if (!this.moveItemStackTo(slotStack, 0, pocketSlotsEnd, false)) {
                     return ItemStack.EMPTY;
                 }
@@ -265,23 +269,35 @@ public class PocketMenu extends AbstractContainerMenu {
         }
 
         this.currentPage = requestedPage;
-
         this.pocketInventory.setCurrentPageForContainer(this.currentPage);
-
         addSlots();
-
         syncPocketSlots();
 
         if (playerInventory.player instanceof ServerPlayer sp) {
             sp.containerMenu = this;
         }
 
+        int newMaxPages = this.pocketInventory.getMaxPages();
+        boolean newCanAddPage = this.pocketInventory.canAddPage();
+        boolean canGoNextAfterChange = newCanAddPage || (this.currentPage + 1) < newMaxPages;
+
         if (playerInventory.player instanceof ServerPlayer serverPlayer) {
-            SyncPocketPagePacket syncPacket = new SyncPocketPagePacket(this.currentPage);
+            SyncPocketPagePacket syncPacket = new SyncPocketPagePacket(this.currentPage, canGoNextAfterChange, newMaxPages);
             PacketDistributor.sendToPlayer(serverPlayer, syncPacket);
-            FantasyTools.LOGGER.debug("PocketMenu Server: Changed to page {} and sent SyncPocketPagePacket", this.currentPage);
-        } else {
-            FantasyTools.LOGGER.debug("PocketMenu Server: Changed to page {}", this.currentPage);
+            FantasyTools.LOGGER.debug("PocketMenu Server: Changed page. Sent sync: page={}, canGoNext={}, maxPages={}", this.currentPage, canGoNextAfterChange, newMaxPages);
+        }
+    }
+
+    public int getClientMaxPages() {
+        return this.clientMaxPages;
+    }
+
+    public void syncClientState(int page, boolean canGoNext, int maxPages) {
+        if (this.playerInventory.player.level().isClientSide) {
+            this.currentPage = page;
+            this.clientCanGoNext = canGoNext;
+            this.clientMaxPages = maxPages;
+            FantasyTools.LOGGER.debug("PocketMenu Client: Synced newPage={}, canGoNext={}, maxPages={}", this.currentPage, this.clientCanGoNext, this.clientMaxPages);
         }
     }
 }

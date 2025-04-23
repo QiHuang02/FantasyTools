@@ -1,7 +1,6 @@
 package cn.qihuang02.fantasytools.client.gui;
 
 import cn.qihuang02.fantasytools.FantasyTools;
-import cn.qihuang02.fantasytools.data.PocketInventory;
 import cn.qihuang02.fantasytools.menu.PocketMenu;
 import cn.qihuang02.fantasytools.network.packet.ChangePocketPagePacket;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -18,11 +17,12 @@ import org.jetbrains.annotations.NotNull;
 public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
     private static final ResourceLocation TEXTURE = FantasyTools.getRL("textures/gui/pocket.png");
 
-    private static final int BUTTON_WIDTH = 50;
+    private static final int BUTTON_WIDTH = 18;
     private static final int BUTTON_HEIGHT = 18;
-    private static final int PREV_BUTTON_X = 10;
-    private static final int NEXT_BUTTON_X = 116;
-    private static final int BUTTON_Y = 64;
+
+    private static final int BUTTON_LEFT_X = -18;
+    private static final int PREV_BUTTON_Y = 18;
+    private static final int NEXT_BUTTON_Y = PREV_BUTTON_Y + BUTTON_HEIGHT;
 
     private Button prevButton;
     private Button nextButton;
@@ -71,13 +71,14 @@ public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
 
     private void renderPageNumber(GuiGraphics guiGraphics) {
         int currentPage = this.menu.getCurrentPage() + 1;
-        String pageText = "Page " + currentPage;
+        int maxPages = this.menu.getClientMaxPages();
+        Component pageInfoText = Component.translatable("tooltip.fantasytools.pocket.pageinfo", currentPage, maxPages);
 
-        int textWidth = this.font.width(pageText);
+        int textWidth = this.font.width(pageInfoText);
         int x = this.leftPos + (this.imageWidth / 2) - (textWidth / 2);
-        int y = this.topPos + (PocketInventory.PAGE_SIZE / 9 * 18) + 5;
+        int y = this.topPos + (6 * 18) + 20;
 
-        guiGraphics.drawString(this.font, pageText, x, y, 0x404040, false);
+        guiGraphics.drawString(this.font, pageInfoText, x, y, 0x404040, false);
     }
 
     @Override
@@ -85,15 +86,14 @@ public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
         super.init();
 
         int buttonStartX = this.leftPos;
-        int buttonStartY = this.topPos + BUTTON_Y;
 
-        this.prevButton = Button.builder(Component.literal("< Prev"), this::handlePrevButtonClick)
-                .bounds(buttonStartX + PREV_BUTTON_X, buttonStartY, BUTTON_WIDTH, BUTTON_HEIGHT)
+        this.prevButton = Button.builder(Component.literal("<"), this::handlePrevButtonClick)
+                .bounds(buttonStartX + BUTTON_LEFT_X, this.topPos + PREV_BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT) // 使用 BUTTON_LEFT_X 和 PREV_BUTTON_Y
                 .build();
         this.addRenderableWidget(this.prevButton);
 
-        this.nextButton = Button.builder(Component.literal("Next >"), this::handleNextButtonClick)
-                .bounds(buttonStartX + NEXT_BUTTON_X, buttonStartY, BUTTON_WIDTH, BUTTON_HEIGHT)
+        this.nextButton = Button.builder(Component.literal(">"), this::handleNextButtonClick)
+                .bounds(buttonStartX + BUTTON_LEFT_X, this.topPos + NEXT_BUTTON_Y, BUTTON_WIDTH, BUTTON_HEIGHT) // 使用 BUTTON_LEFT_X 和 NEXT_BUTTON_Y
                 .build();
         this.addRenderableWidget(this.nextButton);
 

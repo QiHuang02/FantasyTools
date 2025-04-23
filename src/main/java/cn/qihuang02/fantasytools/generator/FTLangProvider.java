@@ -33,6 +33,7 @@ public class FTLangProvider extends LanguageProvider {
         this.add("tooltip.fantasytools.portal_transform.byproduct.chance", "Chance: %s");
         this.add("tooltip.fantasytools.portal_transform.byproduct.min_count", "Min Count: %s");
         this.add("tooltip.fantasytools.portal_transform.byproduct.max_count", "Max Count: %s");
+        this.add("tooltip.fantasytools.pocket.pageinfo", "Page: %s / %s");
 
         this.add("tooltip.fantasytools.portal_transform.dimensions", "Dimension Requirement");
         this.add("tooltip.fantasytools.portal_transform.unknown_dimension", "Unknown dimensions");
@@ -49,5 +50,6 @@ public class FTLangProvider extends LanguageProvider {
         this.add(FTItems.INVIS_CLOAK.get(), "Invisibility Cloak");
         this.add(FTItems.BAMBOO_COPTER.get(), "Bamboo Copter");
         this.add(FTItems.FULL_METAL.get(), "Full Metal");
+        this.add(FTItems.FOUR_DIMENSIONAL_POCKET.get(), "Four Dimensional Pocket");
     }
 }

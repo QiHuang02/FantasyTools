@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PocketInventory implements Container {
-    public static final int PAGE_SIZE = 27;
+    public static final int PAGE_SIZE = 54;
     public static final int STACK_LIMIT = 99;
     private static final String NBT_PAGES = "Pages";
     private static final String NBT_PAGE_INDEX = "PageIndex";
@@ -146,9 +146,7 @@ public class PocketInventory implements Container {
         if (stack.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        // Use ItemStack.split to remove items and return the removed part
         ItemStack splitStack = stack.split(count);
-        // If the split resulted in changes, mark as dirty
         if (!splitStack.isEmpty()) {
             setChanged();
         }
@@ -182,8 +180,6 @@ public class PocketInventory implements Container {
         if (this.dataManager != null) {
             this.dataManager.setDirty();
             FantasyTools.LOGGER.debug("PocketInventory setChanged called, marking PocketDataManager dirty for Pocket UUID: {}", this.pocketUUID != null ? this.pocketUUID : "UNKNOWN");
-        } else {
-
         }
     }
 
@@ -213,7 +209,6 @@ public class PocketInventory implements Container {
                 for (int i = 0; i < items.size(); i++) {
                     ItemStack stack = items.get(i);
                     if (!stack.isEmpty()) {
-                        // Create a placeholder tag with the slot index
                         CompoundTag initialItemTagPlaceholder = new CompoundTag();
                         initialItemTagPlaceholder.putByte("Slot", (byte) i);
 
