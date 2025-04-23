@@ -20,6 +20,8 @@ public class FTComponents {
             register("owner", builder -> builder.persistent(UUIDUtil.CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> NO_PORTAL_TRANSFORM =
             register("no_portal_transform", builder -> builder.persistent(Codec.BOOL));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> POCKET_UUID =
+            register("pocket_uuid", builder -> builder.persistent(UUIDUtil.CODEC));
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(
             String name,

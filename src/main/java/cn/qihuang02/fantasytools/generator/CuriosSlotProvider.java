@@ -26,17 +26,9 @@ public class CuriosSlotProvider extends CuriosDataProvider {
                 .addCosmetic(false)
                 .dropRule(ICurio.DropRule.ALWAYS_KEEP);
         this
-                .createSlot("bamboo_copter")
-                .size(1)
-                .operation("SET")
-                .order(1)
-                .icon(ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "slot/bamboo_copter"))
-                .addCosmetic(false)
-                .dropRule(ICurio.DropRule.ALWAYS_KEEP);
-        this
                 .createEntities("player")
                 .replace(false)
                 .addPlayer()
-                .addSlots("hourglass", "bamboo_copter");
+                .addSlots("hourglass", "head");
     }
 }

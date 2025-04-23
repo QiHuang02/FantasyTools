@@ -55,6 +55,14 @@ repositories {
             includeGroup "com.github.rtyley"
         }
     }
+
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroup("software.bernie.geckolib")
+        }
+    }
 }
 
 base {
@@ -149,6 +157,8 @@ dependencies {
     runtimeOnly "dev.emi:emi-neoforge:${emi_version}"
 
     compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+
+    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
     // compileOnly "dev.latvian.mods:rhino-neoforge:${rhino_version}"
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
@@ -184,7 +194,8 @@ tasks.withType(ProcessResources).configureEach {
             mod_version            : mod_version,
             mod_authors            : mod_authors,
             mod_description        : mod_description,
-            curios_version_range   : curios_version_range
+            curios_version_range   : curios_version_range,
+            geckolib_version       : geckolib_version
     ]
     inputs.properties replaceProperties
 

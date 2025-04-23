@@ -24,7 +24,7 @@ public class FTLangProvider extends LanguageProvider {
         this.add("enchantment.fantasytools.pierce", "Pierce");
 
         this.add("tag.item.curios.hourglass", "Hourglass");
-        this.add("tag.item.curios.bamboo_copter", "Bamboo Copter");
+        this.add("tag.item.curios.head", "Head");
         this.add("tag.item.c.ingots.full_metal", "Full Metal");
         this.add("tag.item.c.gems.full_metal", "Full Metal");
 

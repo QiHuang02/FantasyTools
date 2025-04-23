@@ -1,11 +1,14 @@
 package cn.qihuang02.fantasytools.network.client;
 
+import cn.qihuang02.fantasytools.menu.PocketMenu;
 import cn.qihuang02.fantasytools.network.packet.PierceStackEffectPacket;
 import cn.qihuang02.fantasytools.network.packet.PierceTriggerEffectPacket;
+import cn.qihuang02.fantasytools.network.packet.SyncPocketPagePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -69,6 +72,19 @@ public class ClientPayloadHandlers {
                         2.0F,
                         1.0F + level.random.nextFloat() * 0.2F,
                         true);
+            }
+        });
+    }
+
+    public static void handleSyncPocketPage(SyncPocketPagePacket packet, IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player != null) {
+                AbstractContainerMenu currentMenu = mc.player.containerMenu;
+                if (currentMenu instanceof PocketMenu pocketMenu) {
+                    // Original handler only called setCurrentPageClient
+                    pocketMenu.setCurrentPageClient(packet.newPage());
+                }
             }
         });
     }

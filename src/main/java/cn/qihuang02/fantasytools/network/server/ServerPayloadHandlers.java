@@ -4,15 +4,25 @@ import cn.qihuang02.fantasytools.FTConfig;
 import cn.qihuang02.fantasytools.FantasyTools;
 import cn.qihuang02.fantasytools.component.FTComponents;
 import cn.qihuang02.fantasytools.effect.FTEffect;
+import cn.qihuang02.fantasytools.item.custom.FourDimensionalPocket;
+import cn.qihuang02.fantasytools.menu.PocketMenu;
 import cn.qihuang02.fantasytools.network.packet.ACTZYPacket;
+import cn.qihuang02.fantasytools.network.packet.ChangePocketPagePacket;
+import cn.qihuang02.fantasytools.network.packet.OpenPocketPacket;
 import cn.qihuang02.fantasytools.util.HourglassUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class ServerPayloadHandlers {
@@ -136,5 +146,75 @@ public class ServerPayloadHandlers {
             FantasyTools.LOGGER.debug("Cooldown {} ticks have been set for the item type {} of player {}",
                     player.getName().getString(), itemToCooldown.getDescriptionId(), cooldownTicks);
         }
+    }
+
+    /**
+     * Handles the request from the client to open the Pocket GUI. (Original Version)
+     */
+    public static void handleOpenPocket(final OpenPocketPacket packet, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            ServerPlayer player = getServerPlayer(context);
+            if (player == null) return;
+
+            InteractionHand hand = packet.hand();
+            ItemStack pocketStack = player.getItemInHand(hand);
+
+            if (!(pocketStack.getItem() instanceof FourDimensionalPocket)) {
+                FantasyTools.LOGGER.warn("Player {} tried to open pocket with non-pocket item in hand {}: {}",
+                        player.getName().getString(), hand, pocketStack.getItem().getDescriptionId());
+                return;
+            }
+
+            FourDimensionalPocket.ensurePocketUUID(pocketStack);
+            UUID pocketId = pocketStack.get(FTComponents.POCKET_UUID.get());
+
+            if (pocketId == null) {
+                FantasyTools.LOGGER.error("Pocket item {} used by {} is missing POCKET_UUID component after ensuring!", pocketStack, player.getName().getString());
+                return;
+            }
+
+            MenuProvider menuProvider = createPocketMenuProvider(pocketStack, pocketId);
+            // Original logic: Writes UUID and initial page 0
+            player.openMenu(menuProvider, buf -> {
+                buf.writeUUID(pocketId);
+                buf.writeVarInt(0); // Initial page is 0
+            });
+
+            FantasyTools.LOGGER.debug("Opened pocket {} for player {}", pocketId.toString().substring(0, 8), player.getName().getString());
+        });
+    }
+
+    /**
+     * Handles the request from the client to change the pocket page. (Original Version)
+     */
+    public static void handleChangePocketPage(final ChangePocketPagePacket packet, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            ServerPlayer player = getServerPlayer(context);
+            if (player == null) return;
+
+            if (player.containerMenu instanceof PocketMenu pocketMenu) {
+                // Original logic just calls changePageServer
+                pocketMenu.changePageServer(packet.requestedPage());
+            } else {
+                FantasyTools.LOGGER.warn("Player {} sent ChangePocketPagePacket but is not in PocketMenu. Current menu: {}",
+                        player.getName().getString(), player.containerMenu != null ? player.containerMenu.getType() : "null");
+            }
+        });
+    }
+
+    public static MenuProvider createPocketMenuProvider(ItemStack stack, UUID pocketId) {
+        return new MenuProvider() {
+            @Override
+            public Component getDisplayName() {
+                return stack.getHoverName();
+            }
+
+            @Nullable
+            @Override
+            public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+                // Calls the server-side constructor for PocketMenu
+                return new PocketMenu(containerId, playerInventory, pocketId, 0); // Always starts at page 0
+            }
+        };
     }
 }

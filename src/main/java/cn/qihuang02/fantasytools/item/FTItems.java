@@ -1,10 +1,7 @@
 package cn.qihuang02.fantasytools.item;
 
 import cn.qihuang02.fantasytools.FantasyTools;
-import cn.qihuang02.fantasytools.item.custom.BambooCopter;
-import cn.qihuang02.fantasytools.item.custom.FullMetal;
-import cn.qihuang02.fantasytools.item.custom.Hourglass;
-import cn.qihuang02.fantasytools.item.custom.InvisCloak;
+import cn.qihuang02.fantasytools.item.custom.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.bus.api.IEventBus;
@@ -35,6 +32,10 @@ public class FTItems {
             ));
     public static final DeferredItem<Item> FULL_METAL =
             ITEMS.register("full_metal", () -> new FullMetal(
+                    new Item.Properties()
+            ));
+    public static final DeferredItem<Item> FOUR_DIMENSIONAL_POCKET =
+            ITEMS.register("four_dimensional_pocket", () -> new FourDimensionalPocket(
                     new Item.Properties()
             ));
 

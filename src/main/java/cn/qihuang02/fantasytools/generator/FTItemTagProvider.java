@@ -20,8 +20,8 @@ public class FTItemTagProvider extends ItemTagsProvider {
 
     private static final TagKey<Item> CURIOS_HOURGLASS =
             ItemTags.create(ResourceLocation.fromNamespaceAndPath("curios", "hourglass"));
-    private static final TagKey<Item> CURIOS_BAMBOO_COPTER =
-            ItemTags.create(ResourceLocation.fromNamespaceAndPath("curios", "bamboo_copter"));
+    private static final TagKey<Item> CURIOS_HEAD =
+            ItemTags.create(ResourceLocation.fromNamespaceAndPath("curios", "head"));
 
     private static final TagKey<Item> INGOTS =
             ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "ingots"));
@@ -47,7 +47,7 @@ public class FTItemTagProvider extends ItemTagsProvider {
                 .tag(CURIOS_HOURGLASS)
                 .add(FTItems.ZHONGYA_HOURGLASS.get());
         this
-                .tag(CURIOS_BAMBOO_COPTER)
+                .tag(CURIOS_HEAD)
                 .add(FTItems.BAMBOO_COPTER.get());
         this
                 .tag(FULL_METAL_1)
