@@ -42,5 +42,6 @@ public class FTArmorMaterials {
 
         return Registry.registerForHolder(BuiltInRegistries.ARMOR_MATERIAL, location,
                 new ArmorMaterial(typeProtection, enchantability, equipSound, ingredient, layers, toughness, knockbackResistance));
-    };
+    }
+
 }

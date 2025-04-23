@@ -21,8 +21,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class ServerPayloadHandlers {
@@ -174,10 +174,9 @@ public class ServerPayloadHandlers {
             }
 
             MenuProvider menuProvider = createPocketMenuProvider(pocketStack, pocketId);
-            // Original logic: Writes UUID and initial page 0
             player.openMenu(menuProvider, buf -> {
                 buf.writeUUID(pocketId);
-                buf.writeVarInt(0); // Initial page is 0
+                buf.writeVarInt(0);
             });
 
             FantasyTools.LOGGER.debug("Opened pocket {} for player {}", pocketId.toString().substring(0, 8), player.getName().getString());
@@ -193,7 +192,6 @@ public class ServerPayloadHandlers {
             if (player == null) return;
 
             if (player.containerMenu instanceof PocketMenu pocketMenu) {
-                // Original logic just calls changePageServer
                 pocketMenu.changePageServer(packet.requestedPage());
             } else {
                 FantasyTools.LOGGER.warn("Player {} sent ChangePocketPagePacket but is not in PocketMenu. Current menu: {}",
@@ -205,14 +203,12 @@ public class ServerPayloadHandlers {
     public static MenuProvider createPocketMenuProvider(ItemStack stack, UUID pocketId) {
         return new MenuProvider() {
             @Override
-            public Component getDisplayName() {
+            public @NotNull Component getDisplayName() {
                 return stack.getHoverName();
             }
 
-            @Nullable
             @Override
-            public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
-                // Calls the server-side constructor for PocketMenu
+            public @NotNull AbstractContainerMenu createMenu(int containerId, @NotNull Inventory playerInventory, @NotNull Player player) {
                 return new PocketMenu(containerId, playerInventory, pocketId, 0); // Always starts at page 0
             }
         };

@@ -16,7 +16,7 @@ public class PlayerMixin {
             cancellable = true
     )
     private void onAttack(Entity target, CallbackInfo ci) {
-        Player player = (Player)(Object)this;
+        Player player = (Player) (Object) this;
         if (player.hasEffect(FTEffect.STASIS_EFFECT)) {
             ci.cancel();
         }

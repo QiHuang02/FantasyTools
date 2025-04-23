@@ -18,7 +18,7 @@ public class FTCreativeModeTabs {
                             .builder()
                             .title(Component.translatable("item.fantasytools.tab"))
                             .icon(() -> FTItems.ZHONGYA_HOURGLASS.get().getDefaultInstance())
-                            .displayItems(((parameters, output) ->{
+                            .displayItems(((parameters, output) -> {
                                 output.accept(FTItems.FOUR_DIMENSIONAL_POCKET.get());
                                 output.accept(FTItems.ZHONGYA_HOURGLASS.get());
                                 output.accept(FTItems.INVIS_CLOAK.get());

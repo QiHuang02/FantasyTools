@@ -2,12 +2,13 @@ package cn.qihuang02.fantasytools.recipe.custom;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
+import org.jetbrains.annotations.NotNull;
 
 public record SimpleItemInput(
         ItemStack item
 ) implements RecipeInput {
     @Override
-    public ItemStack getItem(int index) {
+    public @NotNull ItemStack getItem(int index) {
         return index == 0 ? item : ItemStack.EMPTY;
     }
 

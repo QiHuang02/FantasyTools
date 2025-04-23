@@ -28,16 +28,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class FTEmiRecipe implements EmiRecipe {
-    private RecipeHolder<PortalTransformRecipe> recipeHolder;
-    private PortalTransformRecipe recipe;
-    private EmiIngredient input;
-    private EmiStack output;
-
-    private List<EmiStack> byproductsForDisplay;
-
     private static final int BYPRODUCT_GRID_X = 34;
     private static final int BYPRODUCT_GRID_Y = 60;
     private static final int GRID_CELL_SIZE = 18;
+    private final RecipeHolder<PortalTransformRecipe> recipeHolder;
+    private final PortalTransformRecipe recipe;
+    private final EmiIngredient input;
+    private EmiStack output;
+    private final List<EmiStack> byproductsForDisplay;
 
     public FTEmiRecipe(RecipeHolder<PortalTransformRecipe> holder) {
         this.recipeHolder = holder;
@@ -94,7 +92,7 @@ public class FTEmiRecipe implements EmiRecipe {
 
     @Override
     public int getDisplayHeight() {
-        return  120;
+        return 120;
     }
 
     @Override
@@ -138,7 +136,6 @@ public class FTEmiRecipe implements EmiRecipe {
                                 .withStyle(ChatFormatting.GOLD));
         return ClientTooltipComponent.create(dimensionText.getVisualOrderText());
     }
-
 
 
     private void addByproductsSlots(WidgetHolder widgets) {
@@ -190,7 +187,7 @@ public class FTEmiRecipe implements EmiRecipe {
         int row = index / 3;
         int col = index % 3;
 
-        return new int[] {
+        return new int[]{
                 BYPRODUCT_GRID_X + col * (GRID_CELL_SIZE),
                 BYPRODUCT_GRID_Y + row * (GRID_CELL_SIZE),
         };

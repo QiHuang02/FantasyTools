@@ -30,8 +30,6 @@ public class PierceEventHandler {
 
     private static final Map<UUID, PendingPierceDamage> pendingDamageMap = new ConcurrentHashMap<>();
 
-    private record PendingPierceDamage(UUID attackerUUID, float damageAmount, long scheduledTick, int stackCountForEffect) {}
-
     /**
      * Handles logic *after* a LivingEntity takes damage.
      * Checks for Pierce enchantment, manages stacks, and schedules bonus damage if triggered.
@@ -56,8 +54,7 @@ public class PierceEventHandler {
 
         if (player.isShiftKeyDown()) {
             handleShiftAttack(player, targetEntity, spearMap, attackerUUID, enchantmentLevel, serverLevel, currentTick);
-        }
-        else {
+        } else {
             handleNormalAttack(player, targetEntity, spearMap, attackerUUID, enchantmentLevel, serverLevel, currentTick);
         }
     }
@@ -79,7 +76,6 @@ public class PierceEventHandler {
 
         expireOldStacks(livingEntity, currentTick);
     }
-
 
     /**
      * Processes a Shift+Attack, consuming existing stacks to schedule Pierce damage.
@@ -121,8 +117,7 @@ public class PierceEventHandler {
             targetEntity.setData(SpearAttachments.SPEARS, spearMap);
 
             PacketDistributor.sendToPlayersTrackingEntity(targetEntity, new PierceTriggerEffectPacket(targetEntity.getId(), newSpearCount));
-        }
-        else {
+        } else {
             spearMap.put(attackerUUID, new SpearAttachments.SpearData(newSpearCount, currentTick));
             targetEntity.setData(SpearAttachments.SPEARS, spearMap);
             FantasyTools.LOGGER.debug("Normal Attack Pierce stack added: Player {} on Entity {}, count: {}", player.getName().getString(), targetEntity.getName().getString(), newSpearCount);
@@ -197,7 +192,6 @@ public class PierceEventHandler {
         }
     }
 
-
     /**
      * Gets the Pierce enchantment level from the player's main hand item.
      */
@@ -249,5 +243,9 @@ public class PierceEventHandler {
                 enchantmentLevel, spearCount, stackBasedDamage, percentHealthDamage, stackBasedDamage + percentHealthDamage);
 
         return stackBasedDamage + percentHealthDamage;
+    }
+
+    private record PendingPierceDamage(UUID attackerUUID, float damageAmount, long scheduledTick,
+                                       int stackCountForEffect) {
     }
 }

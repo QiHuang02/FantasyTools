@@ -82,7 +82,6 @@ public class ClientPayloadHandlers {
             if (mc.player != null) {
                 AbstractContainerMenu currentMenu = mc.player.containerMenu;
                 if (currentMenu instanceof PocketMenu pocketMenu) {
-                    // Original handler only called setCurrentPageClient
                     pocketMenu.setCurrentPageClient(packet.newPage());
                 }
             }

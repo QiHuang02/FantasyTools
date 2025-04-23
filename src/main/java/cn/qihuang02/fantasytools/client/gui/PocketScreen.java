@@ -22,7 +22,7 @@ public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
     private static final int BUTTON_HEIGHT = 18;
     private static final int PREV_BUTTON_X = 10;
     private static final int NEXT_BUTTON_X = 116;
-    private static final int BUTTON_Y = 64; // Original Y position
+    private static final int BUTTON_Y = 64;
 
     private Button prevButton;
     private Button nextButton;
@@ -42,7 +42,6 @@ public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         this.renderTooltip(guiGraphics, mouseX, mouseY);
 
-        // Original button state update logic
         updateButtonStates();
 
         renderPageNumber(guiGraphics);
@@ -58,32 +57,27 @@ public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
         guiGraphics.blit(TEXTURE, x, y, 0, 0, this.imageWidth, this.imageHeight);
     }
 
-    // Original button state logic
     private void updateButtonStates() {
         int currentPage = this.menu.getCurrentPage();
-        // Original logic relies on client-side dummy inventory state, which is unreliable
-        int maxPages = this.menu.getPocketInventory().getMaxPages(); // Total number of existing pages (on client dummy)
+        int maxPages = this.menu.getPocketInventory().getMaxPages();
 
         this.prevButton.active = currentPage > 0;
-        this.prevButton.visible = currentPage > 0; // Hide if on page 0
+        this.prevButton.visible = currentPage > 0;
 
         boolean canGotoNext = menu.getPocketInventory().canAddPage() || (currentPage + 1) < maxPages;
         this.nextButton.active = canGotoNext;
-        this.nextButton.visible = canGotoNext; // Hide if cannot go next based on client state
+        this.nextButton.visible = canGotoNext;
     }
 
-
-    // Original page number rendering
     private void renderPageNumber(GuiGraphics guiGraphics) {
-        int currentPage = this.menu.getCurrentPage() + 1; // Display as 1-based index
-        String pageText = "Page " + currentPage; // Originally just displayed current page
+        int currentPage = this.menu.getCurrentPage() + 1;
+        String pageText = "Page " + currentPage;
 
         int textWidth = this.font.width(pageText);
         int x = this.leftPos + (this.imageWidth / 2) - (textWidth / 2);
-        // Original Y position calculation
-        int y = this.topPos + (PocketInventory.PAGE_SIZE / 9 * 18) + 5; // Below pocket slots
+        int y = this.topPos + (PocketInventory.PAGE_SIZE / 9 * 18) + 5;
 
-        guiGraphics.drawString(this.font, pageText, x, y, 0x404040, false); // Dark gray color
+        guiGraphics.drawString(this.font, pageText, x, y, 0x404040, false);
     }
 
     @Override
@@ -91,7 +85,7 @@ public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
         super.init();
 
         int buttonStartX = this.leftPos;
-        int buttonStartY = this.topPos + BUTTON_Y; // Use original BUTTON_Y
+        int buttonStartY = this.topPos + BUTTON_Y;
 
         this.prevButton = Button.builder(Component.literal("< Prev"), this::handlePrevButtonClick)
                 .bounds(buttonStartX + PREV_BUTTON_X, buttonStartY, BUTTON_WIDTH, BUTTON_HEIGHT)
@@ -103,7 +97,6 @@ public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
                 .build();
         this.addRenderableWidget(this.nextButton);
 
-        // Initial state update based on potentially incorrect client data
         updateButtonStates();
     }
 
@@ -116,7 +109,6 @@ public class PocketScreen extends AbstractContainerScreen<PocketMenu> {
 
     private void handleNextButtonClick(Button button) {
         int currentPage = this.menu.getCurrentPage();
-        // Original logic, relies on client dummy inventory state
         if (menu.getPocketInventory().canAddPage() || (currentPage + 1 < menu.getPocketInventory().getMaxPages())) {
             requestPageChange(currentPage + 1);
         }

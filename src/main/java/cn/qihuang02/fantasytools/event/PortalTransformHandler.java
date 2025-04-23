@@ -127,7 +127,7 @@ public class PortalTransformHandler {
             for (Byproducts definition : byproducts) {
                 if (definition.counts().min() <= 0 ||
                         definition.counts().max() < definition.counts().min() ||
-                                definition.byproduct().isEmpty()
+                        definition.byproduct().isEmpty()
                 ) {
                     continue;
                 }
