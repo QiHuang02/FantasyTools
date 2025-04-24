@@ -17,6 +17,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,11 +34,6 @@ public record PortalTransformRecipe(
     private static final int MAX_BYPRODUCT_TYPES = 9;
     private static final String ERROR_EMPTY_RESULT = "Recipe result byproduct cannot be empty";
     private static final String ERROR_TOO_MANY_BYPRODUCTS = "Recipe cannot have more than %d byproduct types, found %d";
-
-    @Override
-    public boolean matches(SimpleItemInput input, Level level) {
-        return inputIngredient.test(input.getItem(0));
-    }
 
     /**
      * 验证配方数据的有效性 (用于 Codec)。
@@ -65,27 +61,32 @@ public record PortalTransformRecipe(
     }
 
     @Override
+    public boolean matches(SimpleItemInput input, @NotNull Level level) {
+        return inputIngredient.test(input.getItem(0));
+    }
+
+    @Override
     public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public ItemStack assemble(SimpleItemInput input, HolderLookup.Provider registries) {
+    public @NotNull ItemStack assemble(@NotNull SimpleItemInput input, HolderLookup.@NotNull Provider registries) {
         return result.copy();
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
+    public @NotNull NonNullList<Ingredient> getIngredients() {
         return NonNullList.of(this.inputIngredient);
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public @NotNull RecipeSerializer<?> getSerializer() {
         return FTRecipes.PORTAL_TRANSFORM_SERIALIZER.get();
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public @NotNull RecipeType<?> getType() {
         return FTRecipes.PORTAL_TRANSFORM_TYPE.get();
     }
 
@@ -94,7 +95,7 @@ public record PortalTransformRecipe(
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registries) {
+    public @NotNull ItemStack getResultItem(HolderLookup.@NotNull Provider registries) {
         return result.copy();
     }
 
@@ -131,11 +132,11 @@ public record PortalTransformRecipe(
                         PortalTransformRecipe::validate
                 );
 
-        public MapCodec<PortalTransformRecipe> codec() {
+        public @NotNull MapCodec<PortalTransformRecipe> codec() {
             return CODEC;
         }
 
-        public StreamCodec<RegistryFriendlyByteBuf, PortalTransformRecipe> streamCodec() {
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, PortalTransformRecipe> streamCodec() {
             return STREAM_CODEC;
         }
     }

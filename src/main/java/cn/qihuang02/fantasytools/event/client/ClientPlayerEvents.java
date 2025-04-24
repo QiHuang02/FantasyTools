@@ -1,7 +1,7 @@
 package cn.qihuang02.fantasytools.event.client;
 
 import cn.qihuang02.fantasytools.FantasyTools;
-import cn.qihuang02.fantasytools.item.custom.Invis_cloak;
+import cn.qihuang02.fantasytools.item.custom.InvisCloak;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +25,7 @@ public class ClientPlayerEvents {
         var livingEntity = event.getEntity();
         if (livingEntity instanceof Player) {
             ItemStack chestArmor = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-            if (!chestArmor.isEmpty() && chestArmor.getItem() instanceof Invis_cloak /* && livingEntity.isInvisibleTo(player) */) {
+            if (!chestArmor.isEmpty() && chestArmor.getItem() instanceof InvisCloak /* && livingEntity.isInvisibleTo(player) */) {
                 event.setCanceled(true);
             }
         }

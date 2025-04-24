@@ -25,7 +25,7 @@ public class StasisEffect extends MobEffect {
                     entityTargetingCaster.setTarget(null);
                     entityTargetingCaster.targetSelector.getAvailableGoals().forEach(WrappedGoal::stop);
                     entityTargetingCaster.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
-        });
+                });
     }
 
     @Override

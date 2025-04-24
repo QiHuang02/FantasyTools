@@ -24,12 +24,16 @@ public class FTLangProvider extends LanguageProvider {
         this.add("enchantment.fantasytools.pierce", "Pierce");
 
         this.add("tag.item.curios.hourglass", "Hourglass");
+        this.add("tag.item.curios.head", "Head");
+        this.add("tag.item.c.ingots.full_metal", "Full Metal");
+        this.add("tag.item.c.gems.full_metal", "Full Metal");
 
         this.add("emi.category.fantasytools.portal_transform", "Portal Transform");
         this.add("tooltip.fantasytools.portal_transform.byproduct", "Byproduct");
         this.add("tooltip.fantasytools.portal_transform.byproduct.chance", "Chance: %s");
         this.add("tooltip.fantasytools.portal_transform.byproduct.min_count", "Min Count: %s");
         this.add("tooltip.fantasytools.portal_transform.byproduct.max_count", "Max Count: %s");
+        this.add("tooltip.fantasytools.pocket.pageinfo", "Page: %s / %s");
 
         this.add("tooltip.fantasytools.portal_transform.dimensions", "Dimension Requirement");
         this.add("tooltip.fantasytools.portal_transform.unknown_dimension", "Unknown dimensions");
@@ -42,7 +46,10 @@ public class FTLangProvider extends LanguageProvider {
         this.add("key.fantasytools.activate_zhongya", "Activate Zhongya's Hourglass");
 
         this.add(FTItems.DEMIGUISE_FUR.get(), "Demiguise fur");
-        this.add(FTItems.ZHONGYAHOURGLASS.get(), "Zhongya's Hourglass");
+        this.add(FTItems.ZHONGYA_HOURGLASS.get(), "Zhongya's Hourglass");
         this.add(FTItems.INVIS_CLOAK.get(), "Invisibility Cloak");
+        this.add(FTItems.BAMBOO_COPTER.get(), "Bamboo Copter");
+        this.add(FTItems.FULL_METAL.get(), "Full Metal");
+        this.add(FTItems.FOUR_DIMENSIONAL_POCKET.get(), "Four Dimensional Pocket");
     }
 }

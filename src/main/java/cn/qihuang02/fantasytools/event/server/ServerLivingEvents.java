@@ -1,7 +1,7 @@
 package cn.qihuang02.fantasytools.event.server;
 
 import cn.qihuang02.fantasytools.FantasyTools;
-import cn.qihuang02.fantasytools.item.custom.Invis_cloak;
+import cn.qihuang02.fantasytools.item.custom.InvisCloak;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
@@ -22,7 +22,7 @@ public class ServerLivingEvents {
         if (!(event.getEntity() instanceof Mob mob)) return;
 
         if (mob.getTarget() != null &&
-                mob.getTarget().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof Invis_cloak) {
+                mob.getTarget().getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof InvisCloak) {
             mob.getBrain().eraseMemory(MemoryModuleType.ATTACK_TARGET);
 
             mob.goalSelector.getAvailableGoals().stream()
@@ -48,6 +48,6 @@ public class ServerLivingEvents {
 
     private static boolean isPlayerInvisible(@NotNull Player player) {
         ItemStack chestArmor = player.getItemBySlot(EquipmentSlot.CHEST);
-        return !chestArmor.isEmpty() && chestArmor.getItem() instanceof Invis_cloak;
+        return !chestArmor.isEmpty() && chestArmor.getItem() instanceof InvisCloak;
     }
 }

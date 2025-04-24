@@ -12,7 +12,6 @@ public class FTConfig {
 
     static {
         BUILDER.comment("FTConfig - Configuration for FantasyTools");
-        // --- Zhongya's Hourglass Section ---
         BUILDER.push("zhongya_hourglass");
         BUILDER.comment("Settings related to Zhongya's Hourglass");
         STASIS_DURATION_TICKS = BUILDER

@@ -26,9 +26,9 @@ public class CuriosSlotProvider extends CuriosDataProvider {
                 .addCosmetic(false)
                 .dropRule(ICurio.DropRule.ALWAYS_KEEP);
         this
-                .createEntities("hourglass")
+                .createEntities("player")
                 .replace(false)
                 .addPlayer()
-                .addSlots("hourglass");
+                .addSlots("hourglass", "head");
     }
 }

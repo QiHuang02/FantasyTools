@@ -10,7 +10,7 @@ import top.theillusivec4.curios.api.SlotResult;
 import java.util.Optional;
 
 public class HourglassUtils {
-    private static final Item HOURGLASS = FTItems.ZHONGYAHOURGLASS.get();
+    private static final Item HOURGLASS = FTItems.ZHONGYA_HOURGLASS.get();
 
     private HourglassUtils() {
     }
