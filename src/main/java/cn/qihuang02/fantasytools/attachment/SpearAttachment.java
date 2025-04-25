@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class SpearAttachments {
+public class SpearAttachment {
     public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES =
             DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, FantasyTools.MODID);
     public static final Supplier<AttachmentType<Map<UUID, SpearData>>> SPEARS =
