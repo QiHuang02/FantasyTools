@@ -33,8 +33,8 @@ public class Hourglass extends Item {
             return InteractionResultHolder.success(item);
         }
 
-        PacketDistributor.sendToServer(new ACTZYPacket(item));
-        FantasyTools.LOGGER.info("Sent packet via right-click: {}", item);
+        PacketDistributor.sendToServer(new ACTZYPacket());
+        FantasyTools.LOGGER.debug("Sent packet via right-click: {}", item);
         return InteractionResultHolder.success(item);
     }
 

@@ -60,7 +60,7 @@ public class HourglassUtils {
 
     private static Optional<ItemStack> findHourglassInCurios(Player player) {
         return CuriosApi.getCuriosInventory(player)
-                .flatMap(inv -> inv.findFirstCurio(HOURGLASS)) // 查找第一个匹配的 Curio
+                .flatMap(inv -> inv.findFirstCurio(HOURGLASS))
                 .map(SlotResult::stack);
     }
 }
