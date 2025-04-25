@@ -31,6 +31,8 @@ public class FTEmiRecipe implements EmiRecipe {
     private static final int BYPRODUCT_GRID_X = 34;
     private static final int BYPRODUCT_GRID_Y = 60;
     private static final int GRID_CELL_SIZE = 18;
+    public static final ResourceLocation TEXTURE_TRANSFORM = FantasyTools.getRL("textures/gui/emi/transform.png");
+    public static final ResourceLocation TEXTURE_BIGSLOT = FantasyTools.getRL("textures/gui/emi/big_slot.png");
     private final RecipeHolder<PortalTransformRecipe> recipeHolder;
     private final PortalTransformRecipe recipe;
     private final EmiIngredient input;
@@ -101,7 +103,7 @@ public class FTEmiRecipe implements EmiRecipe {
 
         widgets.addSlot(input, centerX, 2).appendTooltip(() -> createDimensionTooltip(recipe.currentDimension()));
         widgets.addTexture(
-                ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "textures/gui/transform.png"),
+                TEXTURE_TRANSFORM,
                 centerX + 2, 22,
                 13, 16,
                 0, 0,
@@ -110,7 +112,7 @@ public class FTEmiRecipe implements EmiRecipe {
         );
         widgets.addSlot(output, centerX, 40).recipeContext(this).appendTooltip(() -> createDimensionTooltip(recipe.targetDimension()));
         widgets.addTexture(
-                ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "textures/gui/big_slot.png"),
+                TEXTURE_BIGSLOT,
                 34, 60,
                 54, 54,
                 0, 0,
