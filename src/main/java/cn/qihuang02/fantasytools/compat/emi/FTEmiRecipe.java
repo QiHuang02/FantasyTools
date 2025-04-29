@@ -28,16 +28,16 @@ import java.util.List;
 import java.util.Optional;
 
 public class FTEmiRecipe implements EmiRecipe {
+    public static final ResourceLocation TEXTURE_TRANSFORM = FantasyTools.getRL("textures/gui/emi/transform.png");
+    public static final ResourceLocation TEXTURE_BIGSLOT = FantasyTools.getRL("textures/gui/emi/big_slot.png");
     private static final int BYPRODUCT_GRID_X = 34;
     private static final int BYPRODUCT_GRID_Y = 60;
     private static final int GRID_CELL_SIZE = 18;
-    public static final ResourceLocation TEXTURE_TRANSFORM = FantasyTools.getRL("textures/gui/emi/transform.png");
-    public static final ResourceLocation TEXTURE_BIGSLOT = FantasyTools.getRL("textures/gui/emi/big_slot.png");
     private final RecipeHolder<PortalTransformRecipe> recipeHolder;
     private final PortalTransformRecipe recipe;
     private final EmiIngredient input;
-    private EmiStack output;
     private final List<EmiStack> byproductsForDisplay;
+    private EmiStack output;
 
     public FTEmiRecipe(RecipeHolder<PortalTransformRecipe> holder) {
         this.recipeHolder = holder;
