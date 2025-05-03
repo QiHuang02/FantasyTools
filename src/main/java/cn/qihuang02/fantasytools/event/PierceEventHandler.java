@@ -1,7 +1,7 @@
 package cn.qihuang02.fantasytools.event;
 
 import cn.qihuang02.fantasytools.FantasyTools;
-import cn.qihuang02.fantasytools.attachment.SpearAttachments;
+import cn.qihuang02.fantasytools.attachment.SpearAttachment;
 import cn.qihuang02.fantasytools.enchantment.FTEnchantments;
 import cn.qihuang02.fantasytools.network.packet.PierceStackEffectPacket;
 import cn.qihuang02.fantasytools.network.packet.PierceTriggerEffectPacket;
@@ -49,7 +49,7 @@ public class PierceEventHandler {
 
         ServerLevel serverLevel = (ServerLevel) targetEntity.level();
         UUID attackerUUID = player.getUUID();
-        Map<UUID, SpearAttachments.SpearData> spearMap = getSpearMap(targetEntity);
+        Map<UUID, SpearAttachment.SpearData> spearMap = getSpearMap(targetEntity);
         long currentTick = serverLevel.getGameTime();
 
         if (player.isShiftKeyDown()) {
@@ -80,8 +80,8 @@ public class PierceEventHandler {
     /**
      * Processes a Shift+Attack, consuming existing stacks to schedule Pierce damage.
      */
-    private static void handleShiftAttack(ServerPlayer player, LivingEntity targetEntity, Map<UUID, SpearAttachments.SpearData> spearMap, UUID attackerUUID, int enchantmentLevel, ServerLevel serverLevel, long currentTick) {
-        SpearAttachments.SpearData currentData = spearMap.getOrDefault(attackerUUID, new SpearAttachments.SpearData(0, currentTick));
+    private static void handleShiftAttack(ServerPlayer player, LivingEntity targetEntity, Map<UUID, SpearAttachment.SpearData> spearMap, UUID attackerUUID, int enchantmentLevel, ServerLevel serverLevel, long currentTick) {
+        SpearAttachment.SpearData currentData = spearMap.getOrDefault(attackerUUID, new SpearAttachment.SpearData(0, currentTick));
         int currentSpearCount = currentData.count();
 
         if (currentSpearCount > 0) {
@@ -91,7 +91,7 @@ public class PierceEventHandler {
             schedulePierceDamage(targetEntity, attackerUUID, bonusDamage, currentTick, currentSpearCount);
 
             spearMap.remove(attackerUUID);
-            targetEntity.setData(SpearAttachments.SPEARS, spearMap);
+            targetEntity.setData(SpearAttachment.SPEARS, spearMap);
 
             PacketDistributor.sendToPlayersTrackingEntity(targetEntity, new PierceTriggerEffectPacket(targetEntity.getId(), currentSpearCount));
         } else {
@@ -102,8 +102,8 @@ public class PierceEventHandler {
     /**
      * Processes a Normal Attack, adding a stack or consuming stacks if the threshold is met.
      */
-    private static void handleNormalAttack(ServerPlayer player, LivingEntity targetEntity, Map<UUID, SpearAttachments.SpearData> spearMap, UUID attackerUUID, int enchantmentLevel, ServerLevel serverLevel, long currentTick) {
-        SpearAttachments.SpearData currentData = spearMap.getOrDefault(attackerUUID, new SpearAttachments.SpearData(0, currentTick));
+    private static void handleNormalAttack(ServerPlayer player, LivingEntity targetEntity, Map<UUID, SpearAttachment.SpearData> spearMap, UUID attackerUUID, int enchantmentLevel, ServerLevel serverLevel, long currentTick) {
+        SpearAttachment.SpearData currentData = spearMap.getOrDefault(attackerUUID, new SpearAttachment.SpearData(0, currentTick));
         int newSpearCount = currentData.count() + 1;
         int threshold = FTEnchantments.getSpearThreshold(enchantmentLevel);
 
@@ -114,12 +114,12 @@ public class PierceEventHandler {
             schedulePierceDamage(targetEntity, attackerUUID, bonusDamage, currentTick, newSpearCount);
 
             spearMap.remove(attackerUUID);
-            targetEntity.setData(SpearAttachments.SPEARS, spearMap);
+            targetEntity.setData(SpearAttachment.SPEARS, spearMap);
 
             PacketDistributor.sendToPlayersTrackingEntity(targetEntity, new PierceTriggerEffectPacket(targetEntity.getId(), newSpearCount));
         } else {
-            spearMap.put(attackerUUID, new SpearAttachments.SpearData(newSpearCount, currentTick));
-            targetEntity.setData(SpearAttachments.SPEARS, spearMap);
+            spearMap.put(attackerUUID, new SpearAttachment.SpearData(newSpearCount, currentTick));
+            targetEntity.setData(SpearAttachment.SPEARS, spearMap);
             FantasyTools.LOGGER.debug("Normal Attack Pierce stack added: Player {} on Entity {}, count: {}", player.getName().getString(), targetEntity.getName().getString(), newSpearCount);
 
             PacketDistributor.sendToPlayersTrackingEntity(targetEntity, new PierceStackEffectPacket(targetEntity.getId()));
@@ -163,22 +163,22 @@ public class PierceEventHandler {
      * Removes expired Pierce stacks from the entity's attachment data.
      */
     private static void expireOldStacks(LivingEntity livingEntity, long currentTick) {
-        if (!livingEntity.hasData(SpearAttachments.SPEARS)) {
+        if (!livingEntity.hasData(SpearAttachment.SPEARS)) {
             return;
         }
 
-        Map<UUID, SpearAttachments.SpearData> originalMap = livingEntity.getData(SpearAttachments.SPEARS);
-        Map<UUID, SpearAttachments.SpearData> mutableMap = new HashMap<>(originalMap);
+        Map<UUID, SpearAttachment.SpearData> originalMap = livingEntity.getData(SpearAttachment.SPEARS);
+        Map<UUID, SpearAttachment.SpearData> mutableMap = new HashMap<>(originalMap);
 
         if (mutableMap.isEmpty()) {
             return;
         }
 
         boolean changed = false;
-        Iterator<Map.Entry<UUID, SpearAttachments.SpearData>> iterator = mutableMap.entrySet().iterator();
+        Iterator<Map.Entry<UUID, SpearAttachment.SpearData>> iterator = mutableMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Map.Entry<UUID, SpearAttachments.SpearData> entry = iterator.next();
-            SpearAttachments.SpearData data = entry.getValue();
+            Map.Entry<UUID, SpearAttachment.SpearData> entry = iterator.next();
+            SpearAttachment.SpearData data = entry.getValue();
 
             if (currentTick - data.lastAttackTick() > EXPIRATION_TICKS) {
                 iterator.remove();
@@ -188,7 +188,7 @@ public class PierceEventHandler {
         }
 
         if (changed) {
-            livingEntity.setData(SpearAttachments.SPEARS, Collections.unmodifiableMap(mutableMap)); // Set data with the modified map
+            livingEntity.setData(SpearAttachment.SPEARS, Collections.unmodifiableMap(mutableMap)); // Set data with the modified map
         }
     }
 
@@ -210,8 +210,8 @@ public class PierceEventHandler {
     /**
      * Retrieves a mutable copy of the spear attachment data for the target entity.
      */
-    public static Map<UUID, SpearAttachments.SpearData> getSpearMap(LivingEntity targetEntity) {
-        return new HashMap<>(targetEntity.getData(SpearAttachments.SPEARS));
+    public static Map<UUID, SpearAttachment.SpearData> getSpearMap(LivingEntity targetEntity) {
+        return new HashMap<>(targetEntity.getData(SpearAttachment.SPEARS));
     }
 
     /**

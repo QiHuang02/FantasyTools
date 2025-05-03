@@ -1,4 +1,4 @@
-package cn.qihuang02.fantasytools.data;
+package cn.qihuang02.fantasytools.menu.data;
 
 import cn.qihuang02.fantasytools.FantasyTools;
 import net.minecraft.core.HolderLookup;

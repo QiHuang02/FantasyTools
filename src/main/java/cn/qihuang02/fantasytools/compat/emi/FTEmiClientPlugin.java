@@ -16,7 +16,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 
 @EmiEntrypoint
 public class FTEmiClientPlugin implements EmiPlugin {
-    public static final ResourceLocation CATEGORY_ID = ResourceLocation.fromNamespaceAndPath(FantasyTools.MODID, "portal_transform");
+    public static final ResourceLocation CATEGORY_ID = FantasyTools.getRL("portal_transform");
     public static final EmiRecipeCategory PORTAL_TRANSFORM_CATEGORY = new EmiRecipeCategory(
             CATEGORY_ID,
             EmiStack.of(Items.ENDER_PEARL)

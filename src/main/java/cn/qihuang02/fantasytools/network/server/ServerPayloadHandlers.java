@@ -3,8 +3,8 @@ package cn.qihuang02.fantasytools.network.server;
 import cn.qihuang02.fantasytools.FTConfig;
 import cn.qihuang02.fantasytools.FantasyTools;
 import cn.qihuang02.fantasytools.component.FTComponents;
-import cn.qihuang02.fantasytools.data.PocketDataManager;
-import cn.qihuang02.fantasytools.data.PocketInventory;
+import cn.qihuang02.fantasytools.menu.data.PocketDataManager;
+import cn.qihuang02.fantasytools.menu.data.PocketInventory;
 import cn.qihuang02.fantasytools.effect.FTEffect;
 import cn.qihuang02.fantasytools.item.custom.FourDimensionalPocket;
 import cn.qihuang02.fantasytools.menu.PocketMenu;
@@ -43,24 +43,20 @@ public class ServerPayloadHandlers {
         context.enqueueWork(() -> {
             try {
                 ServerPlayer player = getServerPlayer(context);
-                if (player == null || !packet.isValid()) {
+                if (player == null) {
                     FantasyTools.LOGGER.warn("Invalid ACTZY packet or context Player is empty: {}", packet);
                     return;
                 }
 
-                Item hourglassItemFromPacket = packet.stack().getItem();
                 ItemStack hourglassInstance = HourglassUtils.findFirstPresentHourglass(player);
 
                 if (hourglassInstance.isEmpty()) {
-                    FantasyTools.LOGGER.warn("Server: Player {} sent an ACTZY packet, but no item was found in its handheld or Curios {}",
-                            player.getName().getString(), hourglassItemFromPacket.getDescriptionId());
+                    FantasyTools.LOGGER.warn("Server: Player {} sent an ACTZY packet, but no hourglass was found.",
+                            player.getName().getString());
                     return;
                 }
-                if (!hourglassInstance.is(hourglassItemFromPacket)) {
-                    FantasyTools.LOGGER.error("Server: The item found {} does not match the item {} in the packet! Player {}",
-                            hourglassInstance.getDescriptionId(), hourglassItemFromPacket.getDescriptionId(), player.getName().getString());
-                    return;
-                }
+
+                Item hourglassItem = hourglassInstance.getItem();
 
                 UUID ownerUUID = player.getUUID();
                 UUID existingOwner = hourglassInstance.get(FTComponents.OWNER);
@@ -69,18 +65,18 @@ public class ServerPayloadHandlers {
                     hourglassInstance.set(FTComponents.OWNER, ownerUUID);
                     FantasyTools.LOGGER.debug("Set owner {} for item {}", ownerUUID, hourglassInstance.getDescriptionId());
                 } else if (!existingOwner.equals(ownerUUID)) {
-                    handleNotOwner(player, hourglassItemFromPacket);
+                    handleNotOwner(player, hourglassItem);
                     return;
                 }
 
-                if (player.getCooldowns().isOnCooldown(hourglassItemFromPacket)) {
-                    FantasyTools.LOGGER.debug("Player {} tries to use item {}, but the item is in cooldown", player.getName().getString(), hourglassItemFromPacket.getDescriptionId());
+                if (player.getCooldowns().isOnCooldown(hourglassItem)) {
+                    FantasyTools.LOGGER.debug("Player {} tries to use item {}, but the item is in cooldown", player.getName().getString(), hourglassItem.getDescriptionId());
                     return;
                 }
 
                 applyStasisEffect(player);
 
-                setGlobalCooldown(player, hourglassItemFromPacket);
+                setGlobalCooldown(player, hourglassItem);
 
             } catch (Exception e) {
                 FantasyTools.LOGGER.error("An error occurred while processing ACTZY packets, player: {}",

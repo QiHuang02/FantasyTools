@@ -1,4 +1,4 @@
-package cn.qihuang02.fantasytools.data;
+package cn.qihuang02.fantasytools.menu.data;
 
 import cn.qihuang02.fantasytools.FantasyTools;
 import net.minecraft.core.HolderLookup;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class PocketDataManager extends SavedData {
-    private static final String DATA_NAME = FantasyTools.MODID + "_pocket_data";
+    private static final String DATA_NAME = "four_dimensional_pocket_data";
     private static final String NBT_INVENTORIES = "PocketInventories";
 
     private final Map<UUID, PocketInventory> inventories = new HashMap<>();

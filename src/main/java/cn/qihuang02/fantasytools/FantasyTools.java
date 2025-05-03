@@ -1,7 +1,7 @@
 package cn.qihuang02.fantasytools;
 
-import cn.qihuang02.fantasytools.attachment.SpearAttachments;
-import cn.qihuang02.fantasytools.client.gui.PocketScreen;
+import cn.qihuang02.fantasytools.attachment.SpearAttachment;
+import cn.qihuang02.fantasytools.menu.gui.PocketScreen;
 import cn.qihuang02.fantasytools.component.FTComponents;
 import cn.qihuang02.fantasytools.effect.FTEffect;
 import cn.qihuang02.fantasytools.enchantment.FTEnchantmentEffects;
@@ -40,7 +40,7 @@ public class FantasyTools {
         FTComponents.register(modEventBus);
 
         FTEnchantmentEffects.register(modEventBus);
-        SpearAttachments.register(modEventBus);
+        SpearAttachment.register(modEventBus);
 
         FTRecipes.register(modEventBus);
 
@@ -56,13 +56,11 @@ public class FantasyTools {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
         LOGGER.info("HELLO FROM COMMON SETUP");
     }
 
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
 
@@ -70,7 +68,6 @@ public class FantasyTools {
     public static class ClientModEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event) {
-            // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }

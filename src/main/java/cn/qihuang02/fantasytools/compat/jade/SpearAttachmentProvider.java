@@ -1,7 +1,7 @@
 package cn.qihuang02.fantasytools.compat.jade;
 
 import cn.qihuang02.fantasytools.FantasyTools;
-import cn.qihuang02.fantasytools.attachment.SpearAttachments;
+import cn.qihuang02.fantasytools.attachment.SpearAttachment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +39,7 @@ public enum SpearAttachmentProvider implements IEntityComponentProvider, IServer
         if (accessor.getEntity() instanceof LivingEntity living &&
                 accessor.getPlayer() instanceof ServerPlayer serverPlayer) {
 
-            living.getData(SpearAttachments.SPEARS).entrySet().stream()
+            living.getData(SpearAttachment.SPEARS).entrySet().stream()
                     .filter(entry -> entry.getKey().equals(serverPlayer.getUUID()))
                     .findFirst()
                     .ifPresent(entry -> {

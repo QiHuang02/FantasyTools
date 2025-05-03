@@ -27,7 +27,7 @@ public class ClientTickEvents {
 
         if (!hourglassToActivate.isEmpty()) {
             FantasyTools.LOGGER.debug("Client:Find the available hourglass {} and prepare to send the packet.", hourglassToActivate.getDisplayName().getString());
-            ACTZYPacket packet = new ACTZYPacket(hourglassToActivate);
+            ACTZYPacket packet = new ACTZYPacket();
             PacketDistributor.sendToServer(packet);
         } else {
             FantasyTools.LOGGER.debug("Client:Press the activation key, but no available hourglass was found (maybe missing or are all in cooling).");
