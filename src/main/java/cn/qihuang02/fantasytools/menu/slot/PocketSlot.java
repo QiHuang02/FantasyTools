@@ -1,6 +1,6 @@
 package cn.qihuang02.fantasytools.menu.slot;
 
-import cn.qihuang02.fantasytools.data.PocketInventory;
+import cn.qihuang02.fantasytools.menu.data.PocketInventory;
 import cn.qihuang02.fantasytools.item.custom.FourDimensionalPocket;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;

@@ -1,7 +1,7 @@
 package cn.qihuang02.fantasytools;
 
 import cn.qihuang02.fantasytools.attachment.SpearAttachment;
-import cn.qihuang02.fantasytools.client.gui.PocketScreen;
+import cn.qihuang02.fantasytools.menu.gui.PocketScreen;
 import cn.qihuang02.fantasytools.component.FTComponents;
 import cn.qihuang02.fantasytools.effect.FTEffect;
 import cn.qihuang02.fantasytools.enchantment.FTEnchantmentEffects;

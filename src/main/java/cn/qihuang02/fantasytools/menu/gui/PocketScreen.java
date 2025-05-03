@@ -1,4 +1,4 @@
-package cn.qihuang02.fantasytools.client.gui;
+package cn.qihuang02.fantasytools.menu.gui;
 
 import cn.qihuang02.fantasytools.FantasyTools;
 import cn.qihuang02.fantasytools.menu.PocketMenu;

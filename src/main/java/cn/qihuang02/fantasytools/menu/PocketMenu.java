@@ -1,8 +1,8 @@
 package cn.qihuang02.fantasytools.menu;
 
 import cn.qihuang02.fantasytools.FantasyTools;
-import cn.qihuang02.fantasytools.data.PocketDataManager;
-import cn.qihuang02.fantasytools.data.PocketInventory;
+import cn.qihuang02.fantasytools.menu.data.PocketDataManager;
+import cn.qihuang02.fantasytools.menu.data.PocketInventory;
 import cn.qihuang02.fantasytools.menu.slot.PocketSlot;
 import cn.qihuang02.fantasytools.network.packet.SyncPocketPagePacket;
 import net.minecraft.core.NonNullList;
