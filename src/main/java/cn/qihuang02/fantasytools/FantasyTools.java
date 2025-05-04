@@ -8,7 +8,6 @@ import cn.qihuang02.fantasytools.enchantment.FTEnchantmentEffects;
 import cn.qihuang02.fantasytools.item.FTCreativeModeTabs;
 import cn.qihuang02.fantasytools.item.FTItems;
 import cn.qihuang02.fantasytools.menu.FTMenuTypes;
-import cn.qihuang02.fantasytools.recipe.FTRecipes;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -41,8 +40,6 @@ public class FantasyTools {
 
         FTEnchantmentEffects.register(modEventBus);
         SpearAttachment.register(modEventBus);
-
-        FTRecipes.register(modEventBus);
 
         FTMenuTypes.register(modEventBus);
 
