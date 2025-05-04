@@ -28,16 +28,7 @@ public class FTLangProvider extends LanguageProvider {
         this.add("tag.item.c.ingots.full_metal", "Full Metal");
         this.add("tag.item.c.gems.full_metal", "Full Metal");
 
-        this.add("emi.category.fantasytools.portal_transform", "Portal Transform");
-        this.add("tooltip.fantasytools.portal_transform.byproduct", "Byproduct");
-        this.add("tooltip.fantasytools.portal_transform.byproduct.chance", "Chance: %s");
-        this.add("tooltip.fantasytools.portal_transform.byproduct.min_count", "Min Count: %s");
-        this.add("tooltip.fantasytools.portal_transform.byproduct.max_count", "Max Count: %s");
         this.add("tooltip.fantasytools.pocket.pageinfo", "Page: %s / %s");
-
-        this.add("tooltip.fantasytools.portal_transform.dimensions", "Dimension Requirement");
-        this.add("tooltip.fantasytools.portal_transform.unknown_dimension", "Unknown dimensions");
-        this.add("tooltip.fantasytools.portal_transform.no_requirement", "No requirement");
 
         this.add("tooltip.jade.spear.count", "Spear Count: %s");
         this.add("config.jade.plugin_fantasytools.spear_data", "Spear Data");
